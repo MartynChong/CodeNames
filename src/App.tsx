@@ -1,12 +1,12 @@
 import { useState } from "react";
 import "./App.css";
-import Card from "./components/Card";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+// import "@fontsource/roboto/300.css";
+// import "@fontsource/roboto/400.css";
+// import "@fontsource/roboto/500.css";
+// import "@fontsource/roboto/700.css";
 import { nouns } from "./resources/nouns";
-import PlayerList from "./components/PlayerList";
+import { Group, MantineProvider } from "@mantine/core";
+import WordCard from "./components/WordCard";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -19,13 +19,28 @@ function App() {
   var text = nouns[Math.floor(Math.random() * nouns.length)];
 
   return (
-    <div>
-      {" "}
-      //{" "}
-      <Card turn="Spymaster" users={players}>
-        {text}
-      </Card>
-    </div>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{ colorScheme: "dark" }}
+    >
+      <div>
+        {" "}
+        {/* <Card turn="Spymaster" users={players}> */}
+        <Group
+          align="center"
+          mx="xl"
+          mt="md"
+          sx={{ justifyContent: "space-between" }}
+        >
+          <WordCard>{text}</WordCard>
+          <WordCard>{text}</WordCard>
+          <WordCard>{text}</WordCard>
+          <WordCard>{text}</WordCard>
+          <WordCard>{text}</WordCard>
+        </Group>
+      </div>
+    </MantineProvider>
   );
 }
 
