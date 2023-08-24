@@ -7,10 +7,10 @@ interface Props {
 export default function AvatarList({ users }: Props) {
   return (
     <Tooltip.Group openDelay={300} closeDelay={100}>
-      <Avatar.Group spacing="md">
+      <Avatar.Group spacing="sm">
         {users.map((user) => (
           <Tooltip label={user.name} key={user.name}>
-            <Avatar key={user.name} radius="xl" size="md" src={null}></Avatar>
+            <Avatar key={user.name} radius="xl" size="sm" src={null}></Avatar>
           </Tooltip>
         ))}
       </Avatar.Group>
