@@ -1,4 +1,4 @@
-import { Stack, Button, Group, Title } from "@mantine/core";
+import { Stack, Group, Title, Space } from "@mantine/core";
 import { useMemo, useState } from "react";
 import AvatarList from "./AvatarList";
 import { useGameProvider } from "../contexts/GameProvider";
@@ -51,6 +51,9 @@ export default function WordCard({ children, cardNumber }: Props) {
     addBlueCard,
     removeBlueCard,
     removeRedCard,
+
+    redWords,
+    blueWords,
   } = useGameProvider();
 
   //Delete Later
@@ -79,28 +82,36 @@ export default function WordCard({ children, cardNumber }: Props) {
 
   const toggleSelected = () => {
     if (team === "Blue") {
-      if (blueCards.has(cardNumber)) {
-        removeBlueCard(cardNumber);
-      } else {
-        addBlueCard(cardNumber);
+      if (blueWords.has(cardNumber)) {
+        if (blueCards.has(cardNumber)) {
+          removeBlueCard(cardNumber);
+        } else {
+          addBlueCard(cardNumber);
+        }
       }
     } else {
-      if (redCards.has(cardNumber)) {
-        removeRedCard(cardNumber);
-      } else {
-        addRedCard(cardNumber);
+      if (redWords.has(cardNumber)) {
+        if (redCards.has(cardNumber)) {
+          removeRedCard(cardNumber);
+        } else {
+          addRedCard(cardNumber);
+        }
       }
     }
   };
+  // console.log("RED", redWords);
+  // console.log("BLUE", blueWords);
 
   return (
     <Stack
       onClick={() => {
-        forceUpdate();
         if (turn === "Codemaster") {
           toggleSelected();
+          // toggleTeam();
+          // toggleTurn();
+          forceUpdate();
         } else {
-          toggleTurn();
+          // toggleTurn();
           addUserToCurrentUsers(currentUser);
         }
       }}
@@ -108,18 +119,42 @@ export default function WordCard({ children, cardNumber }: Props) {
       w="15vw"
       align="center"
       sx={
-        turn === "Codemaster" && wordSelected
-          ? (theme) => ({
-              outlineStyle: "groove",
-              outlineColor: "cyan",
-              outlineWidth: "2px",
+        turn === "Codemaster"
+          ? team === "Red"
+            ? wordSelected
+              ? (theme) => ({
+                  //RED SELECTED
+                  outlineStyle: "solid",
+                  outlineColor: "turquoise",
+                  outlineWidth: "6px",
 
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[0],
-            })
+                  backgroundColor:
+                    theme.colorScheme === "light"
+                      ? theme.colors.dark[8]
+                      : theme.colors.gray[2],
+                })
+              : (theme) => ({
+                  //RED UNSELECTED
+                  backgroundColor: "#EE4B2B",
+                })
+            : wordSelected
+            ? (theme) => ({
+                //BLUE SELECTED
+                outlineStyle: "solid",
+                outlineColor: "turquoise",
+                outlineWidth: "6px",
+
+                backgroundColor:
+                  theme.colorScheme === "light"
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[2],
+              })
+            : (theme) => ({
+                //BLUE UNSELECTED
+                backgroundColor: "blue",
+              })
           : (theme) => ({
+              //PLAYER TURN
               backgroundColor:
                 theme.colorScheme === "light"
                   ? theme.colors.dark[8]
@@ -130,7 +165,7 @@ export default function WordCard({ children, cardNumber }: Props) {
       //Highlight when selected by codemaster
     >
       {/* {*Player Icons} */}
-      <Group position="right" h="1vh">
+      <Group position="right" h="1vh" mt="xs">
         <AvatarList users={currentUsers}></AvatarList>
       </Group>
 
@@ -143,11 +178,12 @@ export default function WordCard({ children, cardNumber }: Props) {
           msUserSelect: "none",
           userSelect: "none",
         }}
-        order={1}
+        order={3}
         weight={100}
         align="center"
         fw={700}
         c="dark"
+        tt="capitalize"
       >
         {children}
       </Title>

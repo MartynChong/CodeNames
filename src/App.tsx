@@ -1,13 +1,13 @@
 import { useState } from "react";
 import "./App.css";
 import { nouns } from "./resources/nouns";
-import { Group, MantineProvider } from "@mantine/core";
+import { Group, MantineProvider, Space } from "@mantine/core";
 import WordCard from "./components/WordCard";
 // import GameProvider from "./contexts/GameProvider";
 import { WordGrid } from "./components/WordGrid";
 import { Stack } from "@mantine/core";
 import { CountdownTimer } from "./components/CountdownTimer";
-// import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import HintBox from "./components/HintBox";
 
 import "./resources/countstyle.css";
 import GameProvider from "./contexts/GameProvider";
@@ -33,10 +33,10 @@ function App() {
       <GameProvider>
         <div>
           <Stack align="center">
-            {/* <CountdownTimer duration={10}></CountdownTimer> */}
+            <Space h="md" />
             <CountdownTimer duration={10}></CountdownTimer>
-            {/* <Card turn="Spymaster" users={players}> */}
             <WordGrid words={text}></WordGrid>
+            <HintBox></HintBox>
           </Stack>
         </div>
       </GameProvider>
