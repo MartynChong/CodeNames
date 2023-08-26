@@ -22,7 +22,7 @@ const GameProviderCtx = createContext<{
 
 const wordSet = new Set<number>();
 while (wordSet.size < 10) {
-  wordSet.add(Math.floor(Math.random() * 24) + 1);
+  wordSet.add(Math.floor(Math.random() * 19) + 1);
 }
 const arrayWordSet = Array.from(wordSet);
 const redWordsArray = arrayWordSet.slice(0, 4);
@@ -37,7 +37,7 @@ const GameProvider = (props: { children: JSX.Element }) => {
     setTurn(turn === "Codemaster" ? "Players" : "Codemaster");
   };
 
-  const [team, setTeam] = useState<"Blue" | "Red">("Blue");
+  const [team, setTeam] = useState<"Blue" | "Red">("Red");
   const toggleTeam = () => {
     setTeam(team === "Red" ? "Blue" : "Red");
   };
@@ -68,8 +68,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const redWords = new Set<number>(redWordsArray);
   const blueWords = new Set<number>(blueWordsArray);
-  console.log("RED", redWords);
-  console.log("BLUE", blueWords);
 
   return (
     <GameProviderCtx.Provider

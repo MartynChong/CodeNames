@@ -1,5 +1,6 @@
-import { TextInput, Group, Title } from "@mantine/core";
+import { TextInput, Group, Title, Button } from "@mantine/core";
 import { useGameProvider } from "../contexts/GameProvider";
+import { useState } from "react";
 
 export default function HintBox() {
   const {
@@ -20,11 +21,22 @@ export default function HintBox() {
 
   const displayLength = team === "Red" ? redLength : blueLength;
 
-  console.log("CURRENT TEAM", team);
+  const [value, setValue] = useState("");
+
+  const storeValue = (value: string) => {
+    setValue(value);
+    console.log(value);
+  };
 
   return (
     <Group align="center">
-      <TextInput placeholder="Type your clue here" radius="xs" size="xl" />
+      <TextInput
+        value={value}
+        onChange={(event) => storeValue(event.currentTarget.value)}
+        placeholder="Type your clue here"
+        radius="xs"
+        size="xl"
+      />
       <Title
         sx={{
           WebkitUserSelect: "none",
@@ -41,6 +53,9 @@ export default function HintBox() {
       >
         {displayLength}
       </Title>
+      <Button variant="light" color="gray" size="lg" uppercase>
+        Submit{" "}
+      </Button>
     </Group>
   );
 }

@@ -1,5 +1,5 @@
-import { Stack, Group, Title, Space } from "@mantine/core";
-import { useMemo, useState } from "react";
+import { Stack, Group, Title, Space, useMantineTheme } from "@mantine/core";
+import { useState } from "react";
 import AvatarList from "./AvatarList";
 import { useGameProvider } from "../contexts/GameProvider";
 import { useForceUpdate } from "@mantine/hooks";
@@ -17,29 +17,9 @@ type User = {
   pfp: string;
 };
 
-// export const WordCards = () => {
-//   const [voteMap, setVoteMap] = useState<{
-//     [userID: string]: string;
-//   }>({});
-
-//   const userID = "John";
-
-//   const voteOnWord = (currentWord: string) => {
-//     setVoteMap({ ...voteMap, [userID]: currentWord });
-//   };
-
-//   const words = ["dog", "cat", "mouse"];
-//   const currentTurn = "Spymaster";
-
-//   return words.map((word) => (
-//     <WordCard turn={currentTurn} users={[]} onClick={() => voteOnWord(word)}>
-//       {word}
-//     </WordCard>
-//   ));
-// };
-
 // export default function Card({ children, turn, users }: Props) {
 export default function WordCard({ children, cardNumber }: Props) {
+  // const theme = useMantineTheme();
   const {
     turn,
     toggleTurn,
@@ -62,6 +42,46 @@ export default function WordCard({ children, cardNumber }: Props) {
 
   let currentList: { name: string; pfp: string }[] = [];
 
+  const redColour = "#f29292";
+  const blueColour = "#aef5f5";
+  const redOutline = "#ea4d4c";
+  const blueOutline = "#19d4d5";
+
+  const blueCMStyle = {
+    backgroundColor: blueColour,
+  };
+
+  const redCMStyle = {
+    backgroundColor: redColour,
+  };
+
+  const redSelectedStyle = {
+    outlineStyle: "solid",
+    outlineColor: redOutline,
+    outlineWidth: "6px",
+    backgroundColor: redColour,
+  };
+
+  const blueSelectedStyle = {
+    outlineStyle: "solid",
+    outlineColor: blueOutline,
+    outlineWidth: "6px",
+    backgroundColor: blueColour,
+  };
+
+  const normalStyle = {
+    backgroundColor: "#f7fefe",
+  };
+
+  const styles = {
+    border: "1px solid #eee",
+    color: "#999",
+
+    "&:hover": {
+      backgroundColor: "#eee",
+    },
+  };
+
   //State of the list of users within
   const [currentUsers, setCurrentUsers] = useState(currentList);
   const [randomName, setRandomName] = useState("a");
@@ -76,13 +96,21 @@ export default function WordCard({ children, cardNumber }: Props) {
     setRandomName(randomName + "a");
   };
 
-  const wordSelected =
-    (team === "Red" && redCards.has(cardNumber)) ||
-    (team === "Blue" && blueCards.has(cardNumber));
+  //Checks if word is selected by cardmaster
+  const selectedByRed = redCards.has(cardNumber);
 
+  //Checks if word is assigned to team
+  const wordExistsRed = redWords.has(cardNumber);
+
+  const wordExistsBlue = blueWords.has(cardNumber);
+
+  //Checks if word is assigned to either team
+  const wordUsed = redWords.has(cardNumber) || blueWords.has(cardNumber);
+
+  //Selects the card
   const toggleSelected = () => {
     if (team === "Blue") {
-      if (blueWords.has(cardNumber)) {
+      if (wordExistsBlue) {
         if (blueCards.has(cardNumber)) {
           removeBlueCard(cardNumber);
         } else {
@@ -90,7 +118,7 @@ export default function WordCard({ children, cardNumber }: Props) {
         }
       }
     } else {
-      if (redWords.has(cardNumber)) {
+      if (wordExistsRed) {
         if (redCards.has(cardNumber)) {
           removeRedCard(cardNumber);
         } else {
@@ -99,8 +127,6 @@ export default function WordCard({ children, cardNumber }: Props) {
       }
     }
   };
-  // console.log("RED", redWords);
-  // console.log("BLUE", blueWords);
 
   return (
     <Stack
@@ -109,6 +135,7 @@ export default function WordCard({ children, cardNumber }: Props) {
           toggleSelected();
           // toggleTeam();
           // toggleTurn();
+          console.log("CLICKED");
           forceUpdate();
         } else {
           // toggleTurn();
@@ -118,49 +145,21 @@ export default function WordCard({ children, cardNumber }: Props) {
       h="12vh"
       w="15vw"
       align="center"
-      sx={
-        turn === "Codemaster"
-          ? team === "Red"
-            ? wordSelected
-              ? (theme) => ({
-                  //RED SELECTED
-                  outlineStyle: "solid",
-                  outlineColor: "turquoise",
-                  outlineWidth: "6px",
-
-                  backgroundColor:
-                    theme.colorScheme === "light"
-                      ? theme.colors.dark[8]
-                      : theme.colors.gray[2],
-                })
-              : (theme) => ({
-                  //RED UNSELECTED
-                  backgroundColor: "#EE4B2B",
-                })
-            : wordSelected
-            ? (theme) => ({
-                //BLUE SELECTED
-                outlineStyle: "solid",
-                outlineColor: "turquoise",
-                outlineWidth: "6px",
-
-                backgroundColor:
-                  theme.colorScheme === "light"
-                    ? theme.colors.dark[8]
-                    : theme.colors.gray[2],
-              })
-            : (theme) => ({
-                //BLUE UNSELECTED
-                backgroundColor: "blue",
-              })
-          : (theme) => ({
-              //PLAYER TURN
-              backgroundColor:
-                theme.colorScheme === "light"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[0],
-            })
-      }
+      sx={{
+        ...(turn === "Codemaster"
+          ? wordUsed
+            ? wordExistsRed
+              ? redCards.has(cardNumber)
+                ? redSelectedStyle
+                : redCMStyle
+              : wordExistsBlue
+              ? blueCards.has(cardNumber)
+                ? blueSelectedStyle
+                : blueCMStyle
+              : normalStyle
+            : normalStyle
+          : normalStyle),
+      }}
 
       //Highlight when selected by codemaster
     >
