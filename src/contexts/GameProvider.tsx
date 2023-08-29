@@ -8,6 +8,7 @@ const GameProviderCtx = createContext<{
   team: string;
   toggleTeam: () => void;
 
+  //Words generated for each team
   redWords: Set<number>;
   blueWords: Set<number>;
 
@@ -18,6 +19,12 @@ const GameProviderCtx = createContext<{
   removeRedCard: (card: number) => void;
   addBlueCard: (card: number) => void;
   removeBlueCard: (card: number) => void;
+
+  //Hints given by cardmasters
+  redHint: string;
+  blueHint: string;
+  setRedHint: (hint: string) => void;
+  setBlueHint: (hint: string) => void;
 } | null>(null);
 
 const wordSet = new Set<number>();
@@ -37,9 +44,17 @@ const GameProvider = (props: { children: JSX.Element }) => {
     setTurn(turn === "Codemaster" ? "Players" : "Codemaster");
   };
 
-  const [team, setTeam] = useState<"Blue" | "Red">("Red");
+  const [team, setTeam] = useState<"Blue" | "Red">("Blue");
   const toggleTeam = () => {
-    setTeam(team === "Red" ? "Blue" : "Red");
+    if (team === "Red") {
+      setTeam("Blue");
+      let newArr = new Set<number>();
+      setRedCards(newArr);
+    } else {
+      setTeam("Red");
+      let newArr = new Set<number>();
+      setBlueCards(newArr);
+    }
   };
 
   const [redCards, setRedCards] = useState(new Set<number>());
@@ -69,6 +84,9 @@ const GameProvider = (props: { children: JSX.Element }) => {
   const redWords = new Set<number>(redWordsArray);
   const blueWords = new Set<number>(blueWordsArray);
 
+  const [redHint, setRedHint] = useState("");
+  const [blueHint, setBlueHint] = useState("");
+
   return (
     <GameProviderCtx.Provider
       value={{
@@ -88,6 +106,11 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
         redWords,
         blueWords,
+
+        redHint,
+        blueHint,
+        setRedHint,
+        setBlueHint,
       }}
     >
       {props.children}

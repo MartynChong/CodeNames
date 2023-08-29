@@ -34,6 +34,9 @@ export default function WordCard({ children, cardNumber }: Props) {
 
     redWords,
     blueWords,
+
+    redHint,
+    blueHint,
   } = useGameProvider();
 
   //Delete Later
@@ -135,7 +138,6 @@ export default function WordCard({ children, cardNumber }: Props) {
           toggleSelected();
           // toggleTeam();
           // toggleTurn();
-          console.log("CLICKED");
           forceUpdate();
         } else {
           // toggleTurn();

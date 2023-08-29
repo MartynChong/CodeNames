@@ -14,6 +14,10 @@ export default function HintBox() {
     addBlueCard,
     removeBlueCard,
     removeRedCard,
+    redHint,
+    blueHint,
+    setRedHint,
+    setBlueHint,
   } = useGameProvider();
 
   const redLength = redCards.size;
@@ -25,7 +29,20 @@ export default function HintBox() {
 
   const storeValue = (value: string) => {
     setValue(value);
-    console.log(value);
+  };
+
+  const submitHint = (team: string, hint: string) => {
+    if (team === "Red") {
+      setRedHint(hint);
+      console.log("RED ", redHint);
+      toggleTeam();
+      setValue("");
+    } else {
+      setBlueHint(hint);
+      console.log("BLUE ", blueHint);
+      toggleTeam();
+      setValue("");
+    }
   };
 
   return (
@@ -53,7 +70,13 @@ export default function HintBox() {
       >
         {displayLength}
       </Title>
-      <Button variant="light" color="gray" size="lg" uppercase>
+      <Button
+        onClick={() => submitHint(team, value)}
+        variant="light"
+        color="gray"
+        size="lg"
+        uppercase
+      >
         Submit{" "}
       </Button>
     </Group>
