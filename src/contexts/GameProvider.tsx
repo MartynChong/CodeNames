@@ -25,6 +25,12 @@ const GameProviderCtx = createContext<{
   blueHint: string;
   setRedHint: (hint: string) => void;
   setBlueHint: (hint: string) => void;
+
+  //Number of hints
+  redHintGuesses: number;
+  blueHintGuesses: number;
+  setRedHintGuesses: (guess: number) => void;
+  setBlueHintGuesses: (guess: number) => void;
 } | null>(null);
 
 const wordSet = new Set<number>();
@@ -87,6 +93,9 @@ const GameProvider = (props: { children: JSX.Element }) => {
   const [redHint, setRedHint] = useState("");
   const [blueHint, setBlueHint] = useState("");
 
+  const [redHintGuesses, setRedHintGuesses] = useState(0);
+  const [blueHintGuesses, setBlueHintGuesses] = useState(0);
+
   return (
     <GameProviderCtx.Provider
       value={{
@@ -111,6 +120,11 @@ const GameProvider = (props: { children: JSX.Element }) => {
         blueHint,
         setRedHint,
         setBlueHint,
+
+        redHintGuesses,
+        blueHintGuesses,
+        setBlueHintGuesses,
+        setRedHintGuesses,
       }}
     >
       {props.children}

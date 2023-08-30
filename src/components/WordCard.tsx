@@ -37,6 +37,8 @@ export default function WordCard({ children, cardNumber }: Props) {
 
     redHint,
     blueHint,
+    redHintGuesses,
+    blueHintGuesses,
   } = useGameProvider();
 
   //Delete Later
@@ -98,9 +100,6 @@ export default function WordCard({ children, cardNumber }: Props) {
     setCurrentUsers([...currentUsers, { name: randomName, pfp: "Male" }]);
     setRandomName(randomName + "a");
   };
-
-  //Checks if word is selected by cardmaster
-  const selectedByRed = redCards.has(cardNumber);
 
   //Checks if word is assigned to team
   const wordExistsRed = redWords.has(cardNumber);
