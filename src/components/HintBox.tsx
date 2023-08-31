@@ -1,4 +1,11 @@
-import { TextInput, Group, Title, Button, Tooltip } from "@mantine/core";
+import {
+  TextInput,
+  Group,
+  Title,
+  Button,
+  Tooltip,
+  Container,
+} from "@mantine/core";
 import { useGameProvider } from "../contexts/GameProvider";
 import { useState } from "react";
 
@@ -38,6 +45,35 @@ export default function HintBox() {
 
   const currentHint = team === "Red" ? redHint : blueHint;
 
+  const numberBox = (numberInput: number) => {
+    return (
+      <Button
+        onClick={(event) => event.preventDefault()}
+        onTouchMove={(event) => event.preventDefault()}
+        size="xl"
+        variant="default"
+        color="gray"
+      >
+        <Title
+          sx={{
+            WebkitUserSelect: "none",
+            WebkitTouchCallout: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            userSelect: "none",
+          }}
+          order={1}
+          weight={100}
+          align="center"
+          fw={700}
+          c="light"
+        >
+          {numberInput}
+        </Title>
+      </Button>
+    );
+  };
+
   const submitHint = (team: string, hint: string) => {
     if (team === "Red") {
       setRedHint(hint);
@@ -64,22 +100,8 @@ export default function HintBox() {
           radius="xs"
           size="xl"
         />
-        <Title
-          sx={{
-            WebkitUserSelect: "none",
-            WebkitTouchCallout: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-            userSelect: "none",
-          }}
-          order={1}
-          weight={100}
-          align="center"
-          fw={700}
-          c="light"
-        >
-          {displayLength}
-        </Title>
+        {numberBox(displayLength)}
+
         {value === "" ? (
           <Tooltip label="Enter a hint">
             <Button
@@ -129,23 +151,9 @@ export default function HintBox() {
         >
           {currentHint}
         </Title>
-        <Title
-          sx={{
-            WebkitUserSelect: "none",
-            WebkitTouchCallout: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-            userSelect: "none",
-          }}
-          order={1}
-          weight={100}
-          align="center"
-          fw={700}
-          c="light"
-          transform="uppercase"
-        >
-          {team === "Red" ? redHintGuesses : blueHintGuesses}
-        </Title>
+        {team === "Red"
+          ? numberBox(redHintGuesses)
+          : numberBox(blueHintGuesses)}
       </Group>
     );
   };

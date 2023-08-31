@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "./App.css";
 import { nouns } from "./resources/nouns";
-import { Group, MantineProvider, Space } from "@mantine/core";
-import WordCard from "./components/WordCard";
-// import GameProvider from "./contexts/GameProvider";
+import { Container, MantineProvider, Space, RemoveScroll } from "@mantine/core";
 import { WordGrid } from "./components/WordGrid";
-import { Stack } from "@mantine/core";
+import { Modal, Stack, Button } from "@mantine/core";
 import { CountdownTimer } from "./components/CountdownTimer";
+import { useDisclosure } from "@mantine/hooks";
+import VoteWheel from "./components/VoteWheel";
+
 import HintBox from "./components/HintBox";
 
 import "./resources/countstyle.css";
@@ -24,6 +25,8 @@ function App() {
     text.push(nouns[Math.floor(Math.random() * nouns.length)]);
   }
 
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <MantineProvider
       withGlobalStyles
@@ -37,6 +40,19 @@ function App() {
             <CountdownTimer duration={10}></CountdownTimer>
             <WordGrid words={text}></WordGrid>
             <HintBox></HintBox>
+            <Modal
+              opened={opened}
+              onClose={close}
+              centered
+              size="auto"
+              fullScreen
+            >
+              <Container h="60vh" w="35vw">
+                <VoteWheel></VoteWheel>
+              </Container>
+              ;
+            </Modal>
+            <Button onClick={open}>Open centered Modal</Button>
           </Stack>
         </div>
       </GameProvider>

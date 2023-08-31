@@ -1,13 +1,9 @@
-// import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import React, { useRef, useState } from "react";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 type Props = {
   duration: number;
 };
-
-import React, { useRef, useState } from "react";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-
-// import "src/resources/countstyle.css";
 
 export const renderTime = ({ remainingTime }: { remainingTime: any }) => {
   const currentTime = useRef(remainingTime);
