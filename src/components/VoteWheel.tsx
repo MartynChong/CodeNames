@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Wheel } from "react-custom-roulette";
-import { Title } from "@mantine/core";
+import { Box, Title } from "@mantine/core";
 
 const data = [{ option: "MALES" }, { option: "DOG" }, { option: "ANIMAL" }];
 

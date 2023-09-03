@@ -1,7 +1,13 @@
 import { useState } from "react";
 import "./App.css";
 import { nouns } from "./resources/nouns";
-import { Container, MantineProvider, Space, RemoveScroll } from "@mantine/core";
+import {
+  Container,
+  MantineProvider,
+  Space,
+  RemoveScroll,
+  Box,
+} from "@mantine/core";
 import { WordGrid } from "./components/WordGrid";
 import { Modal, Stack, Button } from "@mantine/core";
 import { CountdownTimer } from "./components/CountdownTimer";
@@ -40,17 +46,10 @@ function App() {
             <CountdownTimer duration={10}></CountdownTimer>
             <WordGrid words={text}></WordGrid>
             <HintBox></HintBox>
-            <Modal
-              opened={opened}
-              onClose={close}
-              centered
-              size="auto"
-              fullScreen
-            >
-              <Container h="60vh" w="35vw">
+            <Modal opened={opened} onClose={close} centered size="auto">
+              <Stack align="center" sx={{ overflow: "hidden" }}>
                 <VoteWheel></VoteWheel>
-              </Container>
-              ;
+              </Stack>
             </Modal>
             <Button onClick={open}>Open centered Modal</Button>
           </Stack>

@@ -11,6 +11,7 @@ const GameProviderCtx = createContext<{
   //Words generated for each team
   redWords: Set<number>;
   blueWords: Set<number>;
+  blackWord: number;
 
   //Cards chosen by team members
   redCards: Set<number>;
@@ -34,12 +35,13 @@ const GameProviderCtx = createContext<{
 } | null>(null);
 
 const wordSet = new Set<number>();
-while (wordSet.size < 10) {
+while (wordSet.size < 11) {
   wordSet.add(Math.floor(Math.random() * 19) + 1);
 }
 const arrayWordSet = Array.from(wordSet);
 const redWordsArray = arrayWordSet.slice(0, 4);
-const blueWordsArray = arrayWordSet.slice(5, arrayWordSet.length - 1);
+const blueWordsArray = arrayWordSet.slice(5, arrayWordSet.length - 2);
+const blackWord = arrayWordSet[arrayWordSet.length - 1];
 
 const GameProvider = (props: { children: JSX.Element }) => {
   // Define all your fields and functions that will be accessed by the children
@@ -115,6 +117,7 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
         redWords,
         blueWords,
+        blackWord,
 
         redHint,
         blueHint,

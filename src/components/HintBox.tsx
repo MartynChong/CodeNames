@@ -4,10 +4,13 @@ import {
   Title,
   Button,
   Tooltip,
-  Container,
+  ActionIcon,
+  NumberInputHandlers,
+  NumberInput,
+  rem,
 } from "@mantine/core";
 import { useGameProvider } from "../contexts/GameProvider";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function HintBox() {
   const {
@@ -26,6 +29,8 @@ export default function HintBox() {
     setRedHint,
     setBlueHint,
 
+    redWords,
+    blueWords,
     redHintGuesses,
     blueHintGuesses,
     setRedHintGuesses,
@@ -39,38 +44,84 @@ export default function HintBox() {
 
   const [value, setValue] = useState("");
 
+  const [countValue, setCountValue] = useState<number>(0);
+
   const storeValue = (value: string) => {
     setValue(value);
   };
 
   const currentHint = team === "Red" ? redHint : blueHint;
 
+  const arrowKeys = () => {
+    return (
+      <Button.Group orientation="vertical">
+        <Button
+          variant="light"
+          sx={{
+            backgroundColor: "silver",
+            "&[data-disabled]": { opacity: 0.4 },
+          }}
+          color="gray"
+          size="xs"
+          radius="xs"
+          onClick={() => setCountValue(countValue + 1)}
+          disabled={
+            team === "Red"
+              ? redWords.size <= countValue
+              : blueWords.size <= countValue
+          }
+        >
+          +
+        </Button>
+
+        <Button
+          variant="light"
+          sx={{ backgroundColor: "silver" }}
+          color="gray"
+          size="xs"
+          radius="xs"
+          onClick={() => setCountValue(countValue - 1)}
+          disabled={countValue < 1}
+        >
+          -
+        </Button>
+      </Button.Group>
+    );
+  };
+
+  //Box contains the number display and arrow keys
   const numberBox = (numberInput: number) => {
     return (
-      <Button
-        onClick={(event) => event.preventDefault()}
-        onTouchMove={(event) => event.preventDefault()}
-        size="xl"
-        variant="default"
-        color="gray"
+      <Group
+        spacing={0}
+        sx={{
+          backgroundColor: "silver",
+          borderRadius: "5px",
+          // margin: "15px",
+        }}
       >
-        <Title
-          sx={{
-            WebkitUserSelect: "none",
-            WebkitTouchCallout: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-            userSelect: "none",
-          }}
-          order={1}
-          weight={100}
-          align="center"
-          fw={700}
-          c="light"
-        >
-          {numberInput}
-        </Title>
-      </Button>
+        <Group position="center">
+          <Title
+            sx={{
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
+              userSelect: "none",
+              paddingLeft: "15px",
+              paddingRight: "15px",
+            }}
+            order={1}
+            weight={100}
+            align="center"
+            fw={700}
+            c="dark"
+          >
+            {numberInput}
+          </Title>
+        </Group>
+        {turn === "Codemaster" && arrowKeys()}
+      </Group>
     );
   };
 
@@ -90,9 +141,10 @@ export default function HintBox() {
     }
   };
 
+  //HintBar that displays when cardmaster's turn
   const submitBox = () => {
     return (
-      <Group align="center">
+      <Group position="apart">
         <TextInput
           value={value}
           onChange={(event) => storeValue(event.currentTarget.value)}
@@ -100,7 +152,7 @@ export default function HintBox() {
           radius="xs"
           size="xl"
         />
-        {numberBox(displayLength)}
+        {numberBox(countValue)}
 
         {value === "" ? (
           <Tooltip label="Enter a hint">
@@ -131,6 +183,7 @@ export default function HintBox() {
     );
   };
 
+  //Hintbar that displays when player's turn
   const displayBox = () => {
     return (
       <Group align="center">

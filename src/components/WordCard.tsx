@@ -34,11 +34,7 @@ export default function WordCard({ children, cardNumber }: Props) {
 
     redWords,
     blueWords,
-
-    redHint,
-    blueHint,
-    redHintGuesses,
-    blueHintGuesses,
+    blackWord,
   } = useGameProvider();
 
   //Delete Later
@@ -78,6 +74,14 @@ export default function WordCard({ children, cardNumber }: Props) {
     backgroundColor: "#f7fefe",
   };
 
+  const blackStyle = {
+    backgroundColor: "#010808",
+  };
+
+  const neutralStyle = {
+    backgroundColor: "#b4b5b4",
+  };
+
   const styles = {
     border: "1px solid #eee",
     color: "#999",
@@ -109,6 +113,9 @@ export default function WordCard({ children, cardNumber }: Props) {
   //Checks if word is assigned to either team
   const wordUsed = redWords.has(cardNumber) || blueWords.has(cardNumber);
 
+  //Checks if black card
+  const blackCard = cardNumber === blackWord;
+
   //Selects the card
   const toggleSelected = () => {
     if (team === "Blue") {
@@ -139,7 +146,8 @@ export default function WordCard({ children, cardNumber }: Props) {
           // toggleTurn();
           forceUpdate();
         } else {
-          // toggleTurn();
+          toggleTurn();
+          toggleTeam();
           addUserToCurrentUsers(currentUser);
         }
       }}
@@ -157,9 +165,14 @@ export default function WordCard({ children, cardNumber }: Props) {
               ? blueCards.has(cardNumber)
                 ? blueSelectedStyle
                 : blueCMStyle
+              : blackCard
+              ? blackStyle
               : normalStyle
+            : blackCard
+            ? blackStyle
             : normalStyle
-          : normalStyle),
+          : //Players Turn: black cards and neutral cards ADD FOUND CARDS
+            normalStyle),
       }}
 
       //Highlight when selected by codemaster
@@ -182,7 +195,7 @@ export default function WordCard({ children, cardNumber }: Props) {
         weight={100}
         align="center"
         fw={700}
-        c="dark"
+        c={blackCard && turn === "Codemaster" ? "silver" : "dark"}
         tt="capitalize"
       >
         {children}
