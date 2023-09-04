@@ -29,22 +29,17 @@ export default function HintBox() {
     setRedHint,
     setBlueHint,
 
+    countValue,
+    setCountValue,
+
     redWords,
     blueWords,
-    redHintGuesses,
-    blueHintGuesses,
-    setRedHintGuesses,
-    setBlueHintGuesses,
   } = useGameProvider();
 
   const redLength = redCards.size;
   const blueLength = blueCards.size;
 
-  const displayLength = team === "Red" ? redLength : blueLength;
-
   const [value, setValue] = useState("");
-
-  const [countValue, setCountValue] = useState<number>(0);
 
   const storeValue = (value: string) => {
     setValue(value);
@@ -128,16 +123,14 @@ export default function HintBox() {
   const submitHint = (team: string, hint: string) => {
     if (team === "Red") {
       setRedHint(hint);
-      console.log("RED ", redHint);
+      console.log(countValue, " COUNT");
       toggleTurn();
       setValue("");
-      setRedHintGuesses(redLength);
     } else {
       setBlueHint(hint);
-      console.log("BLUE ", hint);
+      console.log(countValue, " COUNT");
       toggleTurn();
       setValue("");
-      setBlueHintGuesses(blueLength);
     }
   };
 
@@ -204,9 +197,7 @@ export default function HintBox() {
         >
           {currentHint}
         </Title>
-        {team === "Red"
-          ? numberBox(redHintGuesses)
-          : numberBox(blueHintGuesses)}
+        {numberBox(countValue)}
       </Group>
     );
   };

@@ -1,61 +1,57 @@
-import React, { useRef, useState } from "react";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import Countdown from "react-countdown";
+import { useGameProvider } from "../contexts/GameProvider";
+import { Group, Title } from "@mantine/core";
 
-type Props = {
-  duration: number;
-};
+export default function CountdownTimer() {
+  const { timerValue } = useGameProvider();
 
-export const renderTime = ({ remainingTime }: { remainingTime: any }) => {
-  const currentTime = useRef(remainingTime);
-  const prevTime = useRef(null);
-  const isNewTimeFirstTick = useRef(false);
-  const [, setOneLastRerender] = useState(0);
+  // Random component
+  const Completionist = () => <span>You are good to go!</span>;
 
-  if (currentTime.current !== remainingTime) {
-    isNewTimeFirstTick.current = true;
-    prevTime.current = currentTime.current;
-    currentTime.current = remainingTime;
-  } else {
-    isNewTimeFirstTick.current = false;
-  }
-
-  // force one last re-render when the time is over to tirgger the last animation
-  if (remainingTime === 0) {
-    setTimeout(() => {
-      setOneLastRerender((val) => val + 1);
-    }, 20);
-  }
-
-  const isTimeUp = isNewTimeFirstTick.current;
-
-  return (
-    <div className="time-wrapper">
-      <div key={remainingTime} className={`time ${isTimeUp ? "up" : ""}`}>
-        {remainingTime}
-      </div>
-      {prevTime.current !== null && (
-        <div
-          key={prevTime.current}
-          className={`time ${!isTimeUp ? "down" : ""}`}
+  // Renderer callback with condition
+  // @ts-ignore
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return <Completionist />;
+    } else {
+      // Render a countdown
+      return (
+        <Group
+          spacing={0}
+          sx={{
+            backgroundColor: "silver",
+            borderRadius: "5px",
+            border: "10px",
+            // margin: "15px",
+          }}
         >
-          {prevTime.current}
-        </div>
-      )}
-    </div>
-  );
-};
+          <Title
+            sx={{
+              WebkitUserSelect: "none",
+              WebkitTouchCallout: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
+              userSelect: "none",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              paddingTop: "5px",
+              paddingBottom: "5px",
+            }}
+            order={1}
+            weight={100}
+            align="center"
+            fw={700}
+            c="dark"
+          >
+            {minutes}:{seconds}
+          </Title>
+        </Group>
+      );
+    }
+  };
 
-export function CountdownTimer({ duration }: Props) {
   return (
-    <div className="timer-wrapper">
-      <CountdownCircleTimer
-        isPlaying
-        duration={10}
-        colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-        colorsTime={[10, 6, 3, 0]}
-      >
-        {renderTime}
-      </CountdownCircleTimer>
-    </div>
+    <Countdown key={timerValue} date={Date.now() + 30000} renderer={renderer} />
   );
 }

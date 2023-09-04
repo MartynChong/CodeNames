@@ -10,14 +10,15 @@ import {
 } from "@mantine/core";
 import { WordGrid } from "./components/WordGrid";
 import { Modal, Stack, Button } from "@mantine/core";
-import { CountdownTimer } from "./components/CountdownTimer";
 import { useDisclosure } from "@mantine/hooks";
+import CountdownTimer from "./components/CountdownTimer";
 import VoteWheel from "./components/VoteWheel";
 
 import HintBox from "./components/HintBox";
 
 import "./resources/countstyle.css";
 import GameProvider from "./contexts/GameProvider";
+// import TestCard from "./components/TestCard";
 
 function App() {
   let players = [
@@ -25,11 +26,6 @@ function App() {
     { name: "Man", pfp: "Man" },
   ];
   console.log(players.length);
-  const text = new Array<string>();
-
-  for (let i = 0; i < 20; i++) {
-    text.push(nouns[Math.floor(Math.random() * nouns.length)]);
-  }
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -43,8 +39,9 @@ function App() {
         <div>
           <Stack align="center">
             <Space h="md" />
-            <CountdownTimer duration={10}></CountdownTimer>
-            <WordGrid words={text}></WordGrid>
+            {/* <TestCard></TestCard> */}
+            <CountdownTimer></CountdownTimer>
+            <WordGrid></WordGrid>
             <HintBox></HintBox>
             <Modal opened={opened} onClose={close} centered size="auto">
               <Stack align="center" sx={{ overflow: "hidden" }}>

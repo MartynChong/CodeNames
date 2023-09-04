@@ -17,9 +17,10 @@
     "@mantine/hooks": "^6.0.19",
     "@mui/material": "^5.14.5",
     "react": "^18.2.0",
-    "react-countdown-circle-timer": "^3.2.1",
+    "react-countdown": "^2.3.5",
     "react-custom-roulette": "^1.4.1",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-reveal": "^1.2.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

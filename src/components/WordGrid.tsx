@@ -1,18 +1,17 @@
 import { SimpleGrid } from "@mantine/core";
 import WordCard from "./WordCard";
+import { useGameProvider } from "../contexts/GameProvider";
 
-type Props = {
-  words: string[];
-};
+export function WordGrid() {
+  const { text } = useGameProvider();
 
-export const WordGrid = ({ words }: Props) => {
   return (
     <SimpleGrid cols={5} verticalSpacing="xl">
-      {words.map((word, index) => (
+      {text.map((word, index) => (
         <WordCard key={index} cardNumber={index}>
           {word}
         </WordCard>
       ))}
     </SimpleGrid>
   );
-};
+}
