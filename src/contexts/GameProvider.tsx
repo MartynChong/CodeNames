@@ -38,7 +38,18 @@ const GameProviderCtx = createContext<{
 
   //Words list
   text: Array<string>;
+
+  //Current Selected Word
+  selectedWord: number;
+  setSelectedWord: (num: number) => void;
+  changeSelection: (oldCard: number, newCard: number, player: User) => void;
+
+  PlayerSelections: Array<Array<User>>;
+  addNewPlayerSelections: (card: number, player: User) => void;
+  // removePlayerSelections: (card: number, player: User) => void;
 } | null>(null);
+
+const numberOfWords = 20;
 
 const wordSet = new Set<number>();
 while (wordSet.size < 11) {
@@ -53,6 +64,16 @@ const text = new Array<string>();
 for (let i = 0; i < 20; i++) {
   text.push(nouns[Math.floor(Math.random() * nouns.length)]);
 }
+
+var newUser = { name: "DONG", pfp: "Male" };
+const filledArrayList = new Array(numberOfWords);
+filledArrayList.fill(new Array<User>());
+filledArrayList[0].push(newUser);
+
+type User = {
+  name: string;
+  pfp: string;
+};
 
 const GameProvider = (props: { children: JSX.Element }) => {
   // Define all your fields and functions that will be accessed by the children
@@ -113,6 +134,38 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const [countValue, setCountValue] = useState<number>(0);
 
+  const [selectedWord, setSelectedWord] = useState<number>(0);
+
+  const changeSelection = (oldCard: number, newCard: number, player: User) => {
+    console.log("CHANGED WOW", selectedWord);
+    setSelectedWord(newCard);
+    console.log("CHANGED NEW", newCard);
+    addNewPlayerSelections(newCard, player);
+    if (selectedWord != -1) {
+      removePlayerSelections(oldCard, player);
+    }
+  };
+
+  const [PlayerSelections, setPlayerSelections] = useState(filledArrayList);
+
+  const addNewPlayerSelections = (card: number, player: User) => {
+    console.log("CURRENT CARD", card);
+    var newList = new Array(PlayerSelections[card]);
+    newList.push(player);
+    PlayerSelections[card] = newList;
+    console.log("ADDED PLAYER - ", player.name, " TO ", card);
+    console.log(PlayerSelections);
+  };
+
+  const removePlayerSelections = (card: number, player: User) => {
+    var newList = new Array(PlayerSelections[card]);
+
+    var index = newList.indexOf(player);
+    newList.splice(index);
+    PlayerSelections[card] = newList;
+    console.log("REMOVED PLAYER - ", player.name, " FROM ", card);
+  };
+
   return (
     <GameProviderCtx.Provider
       value={{
@@ -146,6 +199,14 @@ const GameProvider = (props: { children: JSX.Element }) => {
         setTimerValue,
 
         text,
+
+        setSelectedWord,
+        selectedWord,
+        changeSelection,
+
+        PlayerSelections,
+        addNewPlayerSelections,
+        // removePlayerSelections,
       }}
     >
       {props.children}

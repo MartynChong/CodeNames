@@ -35,10 +35,14 @@ export default function WordCard({ children, cardNumber }: Props) {
     redWords,
     blueWords,
     blackWord,
+
+    selectedWord,
+    changeSelection,
+    PlayerSelections,
   } = useGameProvider();
 
   //Delete Later
-  var currentUser = { name: "New", pfp: "Male" };
+  var currentUser = { name: "New", pfp: "Whale" };
   const forceUpdate = useForceUpdate();
 
   let currentList: { name: string; pfp: string }[] = [];
@@ -93,7 +97,7 @@ export default function WordCard({ children, cardNumber }: Props) {
 
   //State of the list of users within
   const [currentUsers, setCurrentUsers] = useState(currentList);
-  const [randomName, setRandomName] = useState("a");
+  // const [randomName, setRandomName] = useState("a");
 
   const addUserToCurrentUsers = (currentUser: User) => {
     // Check if user is already in list
@@ -101,8 +105,8 @@ export default function WordCard({ children, cardNumber }: Props) {
     setCurrentUsers([...currentUsers, currentUser]);
 
     // Add mr random name to the list
-    setCurrentUsers([...currentUsers, { name: randomName, pfp: "Male" }]);
-    setRandomName(randomName + "a");
+    // setCurrentUsers([...currentUsers, { name: randomName, pfp: "Male" }]);
+    // setRandomName(randomName + "a");
   };
 
   //Checks if word is assigned to team
@@ -115,6 +119,10 @@ export default function WordCard({ children, cardNumber }: Props) {
 
   //Checks if black card
   const blackCard = cardNumber === blackWord;
+
+  //Displaying Avatar
+  const thisCardPlayersSet = PlayerSelections[cardNumber];
+  // const thisCardPlayersArray = Array.from(thisCardPlayersSet);
 
   //Selects the card
   const toggleSelected = () => {
@@ -146,9 +154,9 @@ export default function WordCard({ children, cardNumber }: Props) {
           // toggleTurn();
           forceUpdate();
         } else {
-          toggleTurn();
-          toggleTeam();
-          addUserToCurrentUsers(currentUser);
+          // toggleTurn();
+          // toggleTeam();
+          changeSelection(selectedWord, cardNumber, currentUser);
         }
       }}
       h="12vh"
@@ -179,7 +187,7 @@ export default function WordCard({ children, cardNumber }: Props) {
     >
       {/* {*Player Icons} */}
       <Group position="right" h="1vh" mt="xs">
-        <AvatarList users={currentUsers}></AvatarList>
+        <AvatarList cardNumber={cardNumber}></AvatarList>
       </Group>
 
       {/* Display Word */}
