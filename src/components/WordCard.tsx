@@ -120,10 +120,6 @@ export default function WordCard({ children, cardNumber }: Props) {
   //Checks if black card
   const blackCard = cardNumber === blackWord;
 
-  //Displaying Avatar
-  const thisCardPlayersSet = PlayerSelections[cardNumber];
-  // const thisCardPlayersArray = Array.from(thisCardPlayersSet);
-
   //Selects the card
   const toggleSelected = () => {
     if (team === "Blue") {
@@ -211,3 +207,7 @@ export default function WordCard({ children, cardNumber }: Props) {
     </Stack>
   );
 }
+
+//HEY ADD WAITING FOR PLAYERS TO CONFIRM
+//RED TEAM BLUE TEAM ON EITHER SIDE
+//WORD CONCLUSION

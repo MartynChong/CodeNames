@@ -17,13 +17,9 @@ export default function HintBox() {
     turn,
     toggleTurn,
     team,
-    toggleTeam,
     redCards,
-    addRedCard,
     blueCards,
-    addBlueCard,
-    removeBlueCard,
-    removeRedCard,
+
     redHint,
     blueHint,
     setRedHint,
@@ -34,6 +30,8 @@ export default function HintBox() {
 
     redWords,
     blueWords,
+
+    confirmation,
   } = useGameProvider();
 
   const redLength = redCards.size;
@@ -169,7 +167,7 @@ export default function HintBox() {
             size="lg"
             uppercase
           >
-            Submit{" "}
+            Submit
           </Button>
         )}
       </Group>
@@ -198,6 +196,31 @@ export default function HintBox() {
           {currentHint}
         </Title>
         {numberBox(countValue)}
+        {confirmation === false ? (
+          <Tooltip label="Select an option">
+            <Button
+              variant="light"
+              color="gray"
+              size="lg"
+              uppercase
+              data-disabled
+              sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
+              onClick={(event) => event.preventDefault()}
+            >
+              Submit
+            </Button>
+          </Tooltip>
+        ) : (
+          <Button
+            // onClick={() => submitHint(team, value)}
+            variant="light"
+            color="gray"
+            size="lg"
+            uppercase
+          >
+            Submit
+          </Button>
+        )}
       </Group>
     );
   };

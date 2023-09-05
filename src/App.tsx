@@ -11,7 +11,6 @@ import {
 import { WordGrid } from "./components/WordGrid";
 import { Modal, Stack, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import CountdownTimer from "./components/CountdownTimer";
 import VoteWheel from "./components/VoteWheel";
 
 import HintBox from "./components/HintBox";
@@ -40,7 +39,6 @@ function App() {
           <Stack align="center">
             <Space h="md" />
             {/* <TestCard></TestCard> */}
-            <CountdownTimer></CountdownTimer>
             <WordGrid></WordGrid>
             <HintBox></HintBox>
             <Modal opened={opened} onClose={close} centered size="auto">
