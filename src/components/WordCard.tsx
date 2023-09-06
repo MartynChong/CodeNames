@@ -39,6 +39,8 @@ export default function WordCard({ children, cardNumber }: Props) {
     selectedWord,
     changeSelection,
     PlayerSelections,
+
+    confirmation,
   } = useGameProvider();
 
   //Delete Later
@@ -149,6 +151,7 @@ export default function WordCard({ children, cardNumber }: Props) {
           // toggleTeam();
           // toggleTurn();
           forceUpdate();
+        } else if (confirmation === true) {
         } else {
           // toggleTurn();
           // toggleTeam();
@@ -156,7 +159,7 @@ export default function WordCard({ children, cardNumber }: Props) {
         }
       }}
       h="12vh"
-      w="15vw"
+      w="13vw"
       align="center"
       sx={{
         ...(turn === "Codemaster"

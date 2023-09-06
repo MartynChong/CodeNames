@@ -38,7 +38,6 @@ function App() {
         <div>
           <Stack align="center">
             <Space h="md" />
-            {/* <TestCard></TestCard> */}
             <WordGrid></WordGrid>
             <HintBox></HintBox>
             <Modal opened={opened} onClose={close} centered size="auto">

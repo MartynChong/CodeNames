@@ -11,9 +11,11 @@ import {
 } from "@mantine/core";
 import { useGameProvider } from "../contexts/GameProvider";
 import { useState, useRef } from "react";
+import { useForceUpdate } from "@mantine/hooks";
 
 export default function HintBox() {
   const {
+    userID,
     turn,
     toggleTurn,
     team,
@@ -31,11 +33,12 @@ export default function HintBox() {
     redWords,
     blueWords,
 
+    userSelected,
     confirmation,
+    confirmVote,
   } = useGameProvider();
 
-  const redLength = redCards.size;
-  const blueLength = blueCards.size;
+  const forceUpdate = useForceUpdate();
 
   const [value, setValue] = useState("");
 
@@ -44,6 +47,9 @@ export default function HintBox() {
   };
 
   const currentHint = team === "Red" ? redHint : blueHint;
+
+  console.log("CURRENT USER", userSelected);
+  console.log("CURRENT CONFIRM", confirmation);
 
   const arrowKeys = () => {
     return (
@@ -197,28 +203,45 @@ export default function HintBox() {
         </Title>
         {numberBox(countValue)}
         {confirmation === false ? (
-          <Tooltip label="Select an option">
+          userSelected === true ? (
             <Button
+              onClick={() => {
+                confirmVote();
+                forceUpdate();
+              }}
               variant="light"
               color="gray"
               size="lg"
               uppercase
-              data-disabled
-              sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
-              onClick={(event) => event.preventDefault()}
             >
               Submit
             </Button>
-          </Tooltip>
+          ) : (
+            <Tooltip label="Select a card">
+              <Button
+                variant="light"
+                color="gray"
+                size="lg"
+                uppercase
+                data-disabled
+                sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
+                onClick={(event) => event.preventDefault()}
+              >
+                Submit
+              </Button>
+            </Tooltip>
+          )
         ) : (
           <Button
-            // onClick={() => submitHint(team, value)}
             variant="light"
             color="gray"
             size="lg"
             uppercase
+            data-disabled
+            sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
+            onClick={(event) => event.preventDefault()}
           >
-            Submit
+            Submitted
           </Button>
         )}
       </Group>
@@ -227,3 +250,46 @@ export default function HintBox() {
 
   return <div>{turn === "Codemaster" ? submitBox() : displayBox()}</div>;
 }
+
+// {confirmation === false ? (
+//   userSelected === false ? (
+//     <Tooltip label="Enter a hint">
+//       <Button
+//         variant="light"
+//         color="gray"
+//         size="lg"
+//         uppercase
+//         data-disabled
+//         sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
+//         onClick={(event) => event.preventDefault()}
+//       >
+//         Submit
+//       </Button>
+//     </Tooltip>
+//   ) : (
+//     <Tooltip label="Select an option">
+//       <Button
+//         onClick={() => confirmVote()}
+//         variant="light"
+//         color="gray"
+//         size="lg"
+//         uppercase
+//       >
+//         Unsubmit
+//       </Button>
+//     </Tooltip>
+//   )
+// ) : (
+//   <Button
+//     onClick={() => {
+//       confirmVote();
+//       forceUpdate();
+//     }}
+//     variant="light"
+//     color="gray"
+//     size="lg"
+//     uppercase
+//   >
+//     Submit
+//   </Button>
+// )}

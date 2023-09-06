@@ -1,10 +1,20 @@
 import { createContext, useContext, useState } from "react";
 import { nouns } from "../resources/nouns";
 
+type User = {
+  name: string;
+  pfp: string;
+};
+
+type Vote = {
+  user: User;
+  card: number;
+};
+
 // Define what variables can be accessed from the context
 const GameProviderCtx = createContext<{
   turn: string;
-  userID: string;
+  userID: User;
   toggleTurn: () => void;
   team: string;
   toggleTeam: () => void;
@@ -40,6 +50,7 @@ const GameProviderCtx = createContext<{
   text: Array<string>;
 
   //Current Selected Word
+  userSelected: boolean;
   selectedWord: number;
   setSelectedWord: (num: number) => void;
   changeSelection: (oldCard: number, newCard: number, player: User) => void;
@@ -48,7 +59,17 @@ const GameProviderCtx = createContext<{
   PlayerSelections: Array<Array<User>>;
   addNewPlayerSelections: (card: number, player: User) => void;
   confirmation: boolean;
-  toggleConfirmation: () => void;
+  confirmVote: () => void;
+  votedCards: Set<Vote>;
+
+  //Number of players
+  redPlayers: Set<User>;
+  bluePlayers: Set<User>;
+
+  //End Turn
+  playersVoted: Set<User>;
+  endVotingTurn: boolean;
+  votesSubmitted: () => void;
 } | null>(null);
 
 const numberOfWords = 20;
@@ -77,14 +98,8 @@ for (let i = 0; i < numberOfWords; i++) {
 }
 console.log(filledArrayList);
 
-type User = {
-  name: string;
-  pfp: string;
-};
-
 const GameProvider = (props: { children: JSX.Element }) => {
-  // Define all your fields and functions that will be accessed by the children
-  const userID = "Martyn";
+  const userID = { name: "Martyn", pfp: "Male" };
 
   const [timerValue, setTimerValue] = useState<number>(0);
 
@@ -141,18 +156,18 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const [countValue, setCountValue] = useState<number>(0);
 
+  const [userSelected, setUserSelected] = useState<boolean>(false);
+
   const [selectedWord, setSelectedWord] = useState<number>(-1);
 
   const changeSelection = (oldCard: number, newCard: number, player: User) => {
-    console.log("CHANGED WOW", selectedWord);
+    setUserSelected(true);
+    // console.log("USER CHANGE", userSelected);
     setSelectedWord(newCard);
-    console.log("CHANGED NEW", newCard);
     addNewPlayerSelections(newCard, player);
     if (selectedWord != -1) {
-      console.log("REMOVING");
       removePlayerSelections(oldCard, player);
     }
-    setConfirmation(true);
   };
 
   const [PlayerSelections, setPlayerSelections] = useState(filledArrayList);
@@ -176,8 +191,38 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const [confirmation, setConfirmation] = useState<boolean>(false);
 
-  const toggleConfirmation = () => {
+  const confirmVote = () => {
     setConfirmation(confirmation === true ? false : true);
+    VoteForCard(userID, selectedWord);
+    console.log("VOTED: ", votedCards);
+  };
+
+  const redPlayers = new Set<User>();
+  const bluePlayers = new Set<User>();
+
+  const playersVoted = new Set<User>();
+  const [endVotingTurn, setEndingVotingTurn] = useState<boolean>(false);
+
+  const votesSubmitted = () => {
+    if (team === "Red") {
+      if (playersVoted.size === redPlayers.size) {
+        endVoting();
+      }
+    } else {
+      if (playersVoted.size === bluePlayers.size) {
+        endVoting();
+      }
+    }
+  };
+
+  const endVoting = () => {
+    console.log("Voting ends");
+  };
+
+  const votedCards = new Set<Vote>();
+
+  const VoteForCard = (user: User, card: number) => {
+    votedCards.add({ user, card });
   };
 
   return (
@@ -214,6 +259,7 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
         text,
 
+        userSelected,
         setSelectedWord,
         selectedWord,
         changeSelection,
@@ -221,7 +267,14 @@ const GameProvider = (props: { children: JSX.Element }) => {
         PlayerSelections,
         addNewPlayerSelections,
         confirmation,
-        toggleConfirmation,
+        confirmVote,
+
+        redPlayers,
+        bluePlayers,
+        playersVoted,
+        endVotingTurn,
+        votesSubmitted,
+        votedCards,
       }}
     >
       {props.children}
