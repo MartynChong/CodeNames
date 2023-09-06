@@ -7,6 +7,8 @@ import {
   Space,
   RemoveScroll,
   Box,
+  Title,
+  TextInput,
 } from "@mantine/core";
 import { WordGrid } from "./components/WordGrid";
 import { Modal, Stack, Button } from "@mantine/core";
@@ -17,6 +19,7 @@ import HintBox from "./components/HintBox";
 
 import "./resources/countstyle.css";
 import GameProvider from "./contexts/GameProvider";
+import { LobbyModal } from "./components/LobbyModal";
 // import TestCard from "./components/TestCard";
 
 function App() {
@@ -26,7 +29,7 @@ function App() {
   ];
   console.log(players.length);
 
-  const [opened, { open, close }] = useDisclosure(false);
+  // const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <MantineProvider
@@ -40,12 +43,13 @@ function App() {
             <Space h="md" />
             <WordGrid></WordGrid>
             <HintBox></HintBox>
-            <Modal opened={opened} onClose={close} centered size="auto">
+            <LobbyModal></LobbyModal>
+            {/* <Modal opened={opened} onClose={close} centered size="auto">
               <Stack align="center" sx={{ overflow: "hidden" }}>
                 <VoteWheel></VoteWheel>
               </Stack>
-            </Modal>
-            <Button onClick={open}>Open centered Modal</Button>
+            </Modal> */}
+            {/* <Button onClick={open}>Open centered Modal</Button> */}
           </Stack>
         </div>
       </GameProvider>
