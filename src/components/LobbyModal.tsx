@@ -22,6 +22,8 @@ export function LobbyModal() {
   const [menuOpen, { open, close }] = useDisclosure(true);
   const [lobbyOpen, setLobbyOpen] = useState(false);
 
+  const [currentTeam, setCurrentTeam] = useState<number>(0);
+
   const redStyle = {
     backgroundColor: "#f29292",
   };
@@ -33,14 +35,14 @@ export function LobbyModal() {
   const lobbyScreen = () => {
     return (
       <Group align="center">
-        {teamMenu("Blue", blueStyle)} {teamMenu("Red", redStyle)}
+        {teamMenu("Blue", blueStyle, 1)} {teamMenu("Red", redStyle, 3)}
       </Group>
     );
   };
 
-  const teamMenu = (name: string, style: object) => {
+  const teamMenu = (name: string, style: object, teamNum: number) => {
     return (
-      <Stack h="40vh" w="40vw" sx={{ ...style }}>
+      <Stack h="40vh" w="48vw" sx={{ ...style }}>
         <Title
           sx={{
             WebkitUserSelect: "none",
@@ -57,11 +59,11 @@ export function LobbyModal() {
         >
           {name} Team
         </Title>
-        <Group position="apart">
+        <Group position="center">
           {" "}
-          {playerTeam("Codemaster")}
+          {playerTeam("Codemaster", teamNum)}
           <Divider orientation="vertical"></Divider>
-          {playerTeam("Players")}
+          {playerTeam("Players", teamNum + 1)}
         </Group>
       </Stack>
     );
@@ -71,9 +73,10 @@ export function LobbyModal() {
   const playerArr = new Array();
   playerArr.push(currentUser);
 
-  const playerTeam = (title: string) => {
+  //Codemaster or Player box
+  const playerTeam = (title: string, ind: number) => {
     return (
-      <Stack>
+      <Stack h="30vh" w="22vw" sx={{ padding: "20px" }}>
         <Title
           sx={{
             WebkitUserSelect: "none",
@@ -92,16 +95,30 @@ export function LobbyModal() {
         </Title>
         {playerArr.map((user, index) => (
           <Group>
-            {" "}
             <Tooltip label={user.name} key={index}>
               <Avatar key={user.name} radius="xl" size="sm" src={null}></Avatar>
             </Tooltip>
             <Text>{user.name}</Text>
           </Group>
         ))}
+        {currentTeam != ind && (
+          <Group>
+            <Button
+              color="lime"
+              size="md"
+              uppercase
+              onClick={() => setCurrentTeam(ind)}
+            >
+              {" "}
+              JOIN
+            </Button>
+          </Group>
+        )}
       </Stack>
     );
   };
+
+  const [value, setValue] = useState("");
 
   return (
     <Modal
@@ -117,19 +134,39 @@ export function LobbyModal() {
         <TextInput
           placeholder="Your name"
           label="Username"
+          value={value}
+          onChange={(event) => setValue(event.currentTarget.value)}
           radius="md"
           size="md"
           withAsterisk
         />
-        <Button
-          size="lg"
-          onClick={() => {
-            setLobbyOpen(true);
-            console.log(lobbyOpen);
-          }}
-        >
-          Join Game
-        </Button>
+        {value != "" ? (
+          <Group>
+            <Button
+              size="lg"
+              uppercase
+              color="green"
+              onClick={() => {
+                setLobbyOpen(true);
+                console.log(lobbyOpen);
+              }}
+            >
+              Join Game
+            </Button>
+          </Group>
+        ) : (
+          <Group>
+            <Button
+              size="lg"
+              uppercase
+              data-disabled
+              sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
+              onClick={(event) => event.preventDefault()}
+            >
+              Join Game
+            </Button>
+          </Group>
+        )}
 
         {lobbyOpen ? lobbyScreen() : <div></div>}
       </Stack>

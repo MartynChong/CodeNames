@@ -99,7 +99,8 @@ for (let i = 0; i < numberOfWords; i++) {
 console.log(filledArrayList);
 
 const GameProvider = (props: { children: JSX.Element }) => {
-  const userID = { name: "Martyn", pfp: "Male" };
+  const default = { name: "Martyn", pfp: "Male" };
+  const [userID, setUserID] = useState<User>();
 
   const [timerValue, setTimerValue] = useState<number>(0);
 
