@@ -14,13 +14,15 @@ type Props = {
 
 type User = {
   name: string;
-  pfp: string;
+  pfp: number;
 };
 
 // export default function Card({ children, turn, users }: Props) {
 export default function WordCard({ children, cardNumber }: Props) {
   // const theme = useMantineTheme();
   const {
+    userID,
+
     turn,
     toggleTurn,
     team,
@@ -43,11 +45,9 @@ export default function WordCard({ children, cardNumber }: Props) {
     confirmation,
   } = useGameProvider();
 
-  //Delete Later
-  var currentUser = { name: "New", pfp: "Whale" };
   const forceUpdate = useForceUpdate();
 
-  let currentList: { name: string; pfp: string }[] = [];
+  let currentList: { name: string; pfp: number }[] = [];
 
   const redColour = "#f29292";
   const blueColour = "#aef5f5";
@@ -105,10 +105,6 @@ export default function WordCard({ children, cardNumber }: Props) {
     // Check if user is already in list
     if (currentUsers.map((u) => u.name).includes(currentUser.name)) return;
     setCurrentUsers([...currentUsers, currentUser]);
-
-    // Add mr random name to the list
-    // setCurrentUsers([...currentUsers, { name: randomName, pfp: "Male" }]);
-    // setRandomName(randomName + "a");
   };
 
   //Checks if word is assigned to team
@@ -155,7 +151,7 @@ export default function WordCard({ children, cardNumber }: Props) {
         } else {
           // toggleTurn();
           // toggleTeam();
-          changeSelection(selectedWord, cardNumber, currentUser);
+          changeSelection(selectedWord, cardNumber, userID);
         }
       }}
       h="12vh"

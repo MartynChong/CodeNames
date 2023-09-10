@@ -4,6 +4,7 @@ import {
   Divider,
   Group,
   Modal,
+  ScrollArea,
   Stack,
   Text,
   TextInput,
@@ -12,17 +13,53 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
+import { useGameProvider } from "../contexts/GameProvider";
 
 type User = {
   name: string;
-  pfp: string;
+  pfp: number;
 };
 
 export function LobbyModal() {
+  const {
+    userID,
+    setUsername,
+    setPfp,
+    redCodemaster,
+    blueCodemaster,
+    redPlayers,
+    bluePlayers,
+  } = useGameProvider();
+
   const [menuOpen, { open, close }] = useDisclosure(true);
   const [lobbyOpen, setLobbyOpen] = useState(false);
 
+  //Team 1 is blue codemaster, team 2 is blue players, team 3 is red codemaster, team 4 is red players
   const [currentTeam, setCurrentTeam] = useState<number>(0);
+
+  const changeTeam = (newTeam: number) => {
+    switch (currentTeam) {
+      case 0:
+        setCurrentTeam(newTeam);
+        break;
+      case 1:
+        setCurrentTeam(newTeam);
+        blueCodemaster.delete(userID);
+        break;
+      case 2:
+        setCurrentTeam(newTeam);
+        bluePlayers.delete(userID);
+        break;
+      case 3:
+        setCurrentTeam(newTeam);
+        redCodemaster.delete(userID);
+        break;
+      case 4:
+        setCurrentTeam(newTeam);
+        redPlayers.delete(userID);
+        break;
+    }
+  };
 
   const redStyle = {
     backgroundColor: "#f29292",
@@ -35,12 +72,19 @@ export function LobbyModal() {
   const lobbyScreen = () => {
     return (
       <Group align="center">
-        {teamMenu("Blue", blueStyle, 1)} {teamMenu("Red", redStyle, 3)}
+        {teamMenu("Blue", blueStyle, 1, blueCodemaster, bluePlayers)}{" "}
+        {teamMenu("Red", redStyle, 3, redCodemaster, redPlayers)}
       </Group>
     );
   };
 
-  const teamMenu = (name: string, style: object, teamNum: number) => {
+  const teamMenu = (
+    name: string,
+    style: object,
+    teamNum: number,
+    codemasterSet: Set<User>,
+    playerSet: Set<User>
+  ) => {
     return (
       <Stack h="40vh" w="48vw" sx={{ ...style }}>
         <Title
@@ -61,20 +105,23 @@ export function LobbyModal() {
         </Title>
         <Group position="center">
           {" "}
-          {playerTeam("Codemaster", teamNum)}
+          {playerTeamDisplay("Codemaster", teamNum, codemasterSet, 1)}
           <Divider orientation="vertical"></Divider>
-          {playerTeam("Players", teamNum + 1)}
+          {playerTeamDisplay("Players", teamNum + 1, playerSet, 4)}
         </Group>
       </Stack>
     );
   };
 
-  var currentUser = { name: "New", pfp: "Whale" };
-  const playerArr = new Array();
-  playerArr.push(currentUser);
-
   //Codemaster or Player box
-  const playerTeam = (title: string, ind: number) => {
+  const playerTeamDisplay = (
+    title: string,
+    ind: number,
+    set: Set<User>,
+    numOfPlayers: number
+  ) => {
+    console.log("REPRINT");
+    var arrayVersion = Array.from(set);
     return (
       <Stack h="30vh" w="22vw" sx={{ padding: "20px" }}>
         <Title
@@ -93,23 +140,32 @@ export function LobbyModal() {
         >
           {title}
         </Title>
-        {playerArr.map((user, index) => (
-          <Group>
-            <Tooltip label={user.name} key={index}>
+        {arrayVersion.map((user, index) => (
+          <Group key={index}>
+            <Tooltip label={user.name}>
               <Avatar key={user.name} radius="xl" size="sm" src={null}></Avatar>
             </Tooltip>
             <Text>{user.name}</Text>
           </Group>
         ))}
-        {currentTeam != ind && (
+        {currentTeam != ind && arrayVersion.length < numOfPlayers && (
           <Group>
             <Button
               color="lime"
               size="md"
               uppercase
-              onClick={() => setCurrentTeam(ind)}
+              onClick={() => {
+                changeTeam(ind);
+                set.add(userID);
+                console.log(
+                  "Current Arr",
+                  redCodemaster,
+                  blueCodemaster,
+                  bluePlayers,
+                  redPlayers
+                );
+              }}
             >
-              {" "}
               JOIN
             </Button>
           </Group>
@@ -118,7 +174,58 @@ export function LobbyModal() {
     );
   };
 
-  const [value, setValue] = useState("");
+  const [usernameValue, setUsernameValue] = useState("");
+
+  const pfpSelection = () => {
+    var sizeNum = 100;
+    var radNum = 60;
+    return (
+      <ScrollArea w="90vw" h="15vh">
+        <Group>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\spongebob.png"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\squidward.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\gary.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\patrick.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\plankton.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\sandy.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\mrspuff.jpg"
+          ></Avatar>
+          <Avatar
+            size={sizeNum}
+            radius={radNum}
+            src="src\resources\pfps\mrkrabs.jpg"
+          ></Avatar>
+        </Group>
+      </ScrollArea>
+    );
+  };
 
   return (
     <Modal
@@ -134,13 +241,14 @@ export function LobbyModal() {
         <TextInput
           placeholder="Your name"
           label="Username"
-          value={value}
-          onChange={(event) => setValue(event.currentTarget.value)}
+          value={usernameValue}
+          onChange={(event) => setUsernameValue(event.currentTarget.value)}
           radius="md"
           size="md"
           withAsterisk
         />
-        {value != "" ? (
+        {pfpSelection()}
+        {usernameValue != "" ? (
           <Group>
             <Button
               size="lg"
@@ -148,7 +256,8 @@ export function LobbyModal() {
               color="green"
               onClick={() => {
                 setLobbyOpen(true);
-                console.log(lobbyOpen);
+                setUsername(usernameValue);
+                console.log("Current User ", userID);
               }}
             >
               Join Game
@@ -167,7 +276,6 @@ export function LobbyModal() {
             </Button>
           </Group>
         )}
-
         {lobbyOpen ? lobbyScreen() : <div></div>}
       </Stack>
     </Modal>

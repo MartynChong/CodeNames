@@ -7,7 +7,7 @@ interface Props {
 
 type User = {
   name: string;
-  pfp: string;
+  pfp: number;
 };
 
 export default function AvatarList({ cardNumber }: Props) {

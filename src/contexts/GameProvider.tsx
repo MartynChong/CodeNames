@@ -3,7 +3,7 @@ import { nouns } from "../resources/nouns";
 
 type User = {
   name: string;
-  pfp: string;
+  pfp: number;
 };
 
 type Vote = {
@@ -13,8 +13,14 @@ type Vote = {
 
 // Define what variables can be accessed from the context
 const GameProviderCtx = createContext<{
-  turn: string;
   userID: User;
+  setPfp: (num: number) => void;
+  setUsername: (name: string) => void;
+
+  redCodemaster: Set<User>;
+  blueCodemaster: Set<User>;
+
+  turn: string;
   toggleTurn: () => void;
   team: string;
   toggleTeam: () => void;
@@ -96,11 +102,21 @@ for (let i = 0; i < numberOfWords; i++) {
 for (let i = 0; i < numberOfWords; i++) {
   filledArrayList[i].push(newUser);
 }
-console.log(filledArrayList);
 
 const GameProvider = (props: { children: JSX.Element }) => {
-  const default = { name: "Martyn", pfp: "Male" };
-  const [userID, setUserID] = useState<User>();
+  const defaultUser = { name: "Bobo", pfp: -1 };
+  const [userID, setUserID] = useState<User>(defaultUser);
+
+  const redCodemaster = new Set<User>();
+  const blueCodemaster = new Set<User>();
+
+  const setPfp = (num: number) => {
+    userID.pfp = num;
+  };
+
+  const setUsername = (name: string) => {
+    userID.name = name;
+  };
 
   const [timerValue, setTimerValue] = useState<number>(0);
 
@@ -229,8 +245,14 @@ const GameProvider = (props: { children: JSX.Element }) => {
   return (
     <GameProviderCtx.Provider
       value={{
-        turn,
         userID,
+        setPfp,
+        setUsername,
+
+        blueCodemaster,
+        redCodemaster,
+
+        turn,
         toggleTurn,
 
         redCards,
