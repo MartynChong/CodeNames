@@ -176,54 +176,94 @@ export function LobbyModal() {
 
   const [usernameValue, setUsernameValue] = useState("");
 
+  const [pfpSelect, setPfpSelect] = useState<number>(-1);
+
+  const highlightStyle = {
+    outlineStyle: "solid",
+    outlineColor: "green",
+    outlineWidth: "6px",
+  };
+
+  const noStyle = {};
+
   const pfpSelection = () => {
-    var sizeNum = 100;
-    var radNum = 60;
+    var radNum = 70;
+    var size = 150;
     return (
-      <ScrollArea w="90vw" h="15vh">
-        <Group>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\spongebob.png"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\squidward.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\gary.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\patrick.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\plankton.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\sandy.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\mrspuff.jpg"
-          ></Avatar>
-          <Avatar
-            size={sizeNum}
-            radius={radNum}
-            src="src\resources\pfps\mrkrabs.jpg"
-          ></Avatar>
-        </Group>
-      </ScrollArea>
+      <Group>
+        <Avatar
+          size={size}
+          radius={radNum}
+          src="src\resources\pfps\spongebob.png"
+          onClick={() => {
+            setPfpSelect(0);
+          }}
+          sx={{ ...(pfpSelect === 0 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          size={size}
+          radius={radNum}
+          src="src\resources\pfps\squidward.jpg"
+          onClick={() => {
+            setPfpSelect(1);
+          }}
+          sx={{ ...(pfpSelect === 1 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\gary.jpg"
+          onClick={() => {
+            setPfpSelect(2);
+          }}
+          sx={{ ...(pfpSelect === 2 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\patrick.jpg"
+          onClick={() => {
+            setPfpSelect(3);
+          }}
+          sx={{ ...(pfpSelect === 3 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\plankton.jpg"
+          onClick={() => {
+            setPfpSelect(4);
+          }}
+          sx={{ ...(pfpSelect === 4 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\sandy.jpg"
+          onClick={() => {
+            setPfpSelect(5);
+          }}
+          sx={{ ...(pfpSelect === 5 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\mrspuff.jpg"
+          onClick={() => {
+            setPfpSelect(6);
+          }}
+          sx={{ ...(pfpSelect === 6 ? highlightStyle : noStyle) }}
+        ></Avatar>
+        <Avatar
+          radius={radNum}
+          size={size}
+          src="src\resources\pfps\mrkrabs.jpg"
+          onClick={() => {
+            setPfpSelect(7);
+          }}
+          sx={{ ...(pfpSelect === 7 ? highlightStyle : noStyle) }}
+        ></Avatar>
+      </Group>
     );
   };
 
@@ -247,6 +287,7 @@ export function LobbyModal() {
           size="md"
           withAsterisk
         />
+        <label>Select an Avatar</label>
         {pfpSelection()}
         {usernameValue != "" ? (
           <Group>
