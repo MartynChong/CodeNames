@@ -4,6 +4,7 @@ import { nouns } from "../resources/nouns";
 type User = {
   name: string;
   pfp: number;
+  voted: boolean;
 };
 
 type Vote = {
@@ -16,6 +17,7 @@ const GameProviderCtx = createContext<{
   userID: User;
   setPfp: (num: number) => void;
   setUsername: (name: string) => void;
+  setVoteStatus: () => void;
 
   redCodemaster: Set<User>;
   blueCodemaster: Set<User>;
@@ -26,9 +28,9 @@ const GameProviderCtx = createContext<{
   toggleTeam: () => void;
 
   //Words generated for each team
-  redWords: Set<number>;
-  blueWords: Set<number>;
-  blackWord: number;
+  redWords: Set<{ card: number; found: boolean }>;
+  blueWords: Set<{ card: number; found: boolean }>;
+  blackWord: { card: number; found: boolean; team: "Red" | "Blue" | null };
 
   //Cards chosen by team members
   redCards: Set<number>;
@@ -62,7 +64,7 @@ const GameProviderCtx = createContext<{
   changeSelection: (oldCard: number, newCard: number, player: User) => void;
 
   //Player card selection and confirmation
-  PlayerSelections: Array<Array<User>>;
+  playerSelections: Array<Array<User>>;
   addNewPlayerSelections: (card: number, player: User) => void;
   confirmation: boolean;
   confirmVote: () => void;
@@ -87,24 +89,25 @@ while (wordSet.size < 11) {
 const arrayWordSet = Array.from(wordSet);
 const redWordsArray = arrayWordSet.slice(0, 4);
 const blueWordsArray = arrayWordSet.slice(5, arrayWordSet.length - 2);
-const blackWord = arrayWordSet[arrayWordSet.length - 1];
+const blackFind = arrayWordSet[arrayWordSet.length - 1];
+const blackWord = { card: blackFind, found: false, team: null };
 const text = new Array<string>();
 
 for (let i = 0; i < 20; i++) {
   text.push(nouns[Math.floor(Math.random() * nouns.length)]);
 }
 
-var newUser = { name: "DONG", pfp: "Male" };
+// var newUser = { name: "DONG", pfp: "Male" };
 const filledArrayList = new Array();
 for (let i = 0; i < numberOfWords; i++) {
   filledArrayList.push([]);
 }
-for (let i = 0; i < numberOfWords; i++) {
-  filledArrayList[i].push(newUser);
-}
+// for (let i = 0; i < numberOfWords; i++) {
+//   filledArrayList[i].push(newUser);
+// }
 
 const GameProvider = (props: { children: JSX.Element }) => {
-  const defaultUser = { name: "Bobo", pfp: -1 };
+  const defaultUser = { name: "Bobo", pfp: -1, voted: false };
   const [userID, setUserID] = useState<User>(defaultUser);
 
   const redCodemaster = new Set<User>();
@@ -116,6 +119,10 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const setUsername = (name: string) => {
     userID.name = name;
+  };
+
+  const setVoteStatus = () => {
+    userID.voted === true ? false : true;
   };
 
   const [timerValue, setTimerValue] = useState<number>(0);
@@ -165,8 +172,20 @@ const GameProvider = (props: { children: JSX.Element }) => {
     setBlueCards(newArr);
   };
 
-  const redWords = new Set<number>(redWordsArray);
-  const blueWords = new Set<number>(blueWordsArray);
+  var redSet = new Set<{ card: number; found: boolean }>();
+  for (let i = 0; i < redWordsArray.length; i++) {
+    redSet.add({ card: redWordsArray[i], found: false });
+  }
+
+  var blueSet = new Set<{ card: number; found: boolean }>();
+  for (let i = 0; i < blueWordsArray.length; i++) {
+    blueSet.add({ card: blueWordsArray[i], found: false });
+  }
+
+  console.log("BLUE", blueSet);
+  console.log("RED", redSet);
+  const redWords = new Set<{ card: number; found: boolean }>(redSet);
+  const blueWords = new Set<{ card: number; found: boolean }>(blueSet);
 
   const [redHint, setRedHint] = useState("");
   const [blueHint, setBlueHint] = useState("");
@@ -187,23 +206,23 @@ const GameProvider = (props: { children: JSX.Element }) => {
     }
   };
 
-  const [PlayerSelections, setPlayerSelections] = useState(filledArrayList);
+  const [playerSelections, setPlayerSelections] = useState(filledArrayList);
 
   const addNewPlayerSelections = (card: number, player: User) => {
     console.log("CURRENT CARD", card);
-    var newList = PlayerSelections[card];
+    var newList = playerSelections[card];
     newList.push(player);
     console.log("ADDED PLAYER - ", player.name, " TO ", card);
-    console.log(PlayerSelections);
+    console.log(playerSelections);
   };
 
   const removePlayerSelections = (card: number, player: User) => {
-    console.log("PREV ARR", PlayerSelections[card]);
-    var oldList = PlayerSelections[card];
+    console.log("PREV ARR", playerSelections[card]);
+    var oldList = playerSelections[card];
     var index = oldList.indexOf(player);
     oldList.splice(index, 1);
     console.log("REMOVED PLAYER - ", player.name, " FROM ", card);
-    console.log("NEW ARR ", PlayerSelections[card]);
+    console.log("NEW ARR ", playerSelections[card]);
   };
 
   const [confirmation, setConfirmation] = useState<boolean>(false);
@@ -248,6 +267,7 @@ const GameProvider = (props: { children: JSX.Element }) => {
         userID,
         setPfp,
         setUsername,
+        setVoteStatus,
 
         blueCodemaster,
         redCodemaster,
@@ -287,7 +307,7 @@ const GameProvider = (props: { children: JSX.Element }) => {
         selectedWord,
         changeSelection,
 
-        PlayerSelections,
+        playerSelections,
         addNewPlayerSelections,
         confirmation,
         confirmVote,

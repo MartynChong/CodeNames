@@ -5,15 +5,10 @@ interface Props {
   cardNumber: number;
 }
 
-type User = {
-  name: string;
-  pfp: number;
-};
-
 export default function AvatarList({ cardNumber }: Props) {
-  const { PlayerSelections } = useGameProvider();
+  const { playerSelections } = useGameProvider();
 
-  const newArr = PlayerSelections[cardNumber];
+  const newArr = playerSelections[cardNumber];
 
   return (
     <Tooltip.Group openDelay={300} closeDelay={100}>

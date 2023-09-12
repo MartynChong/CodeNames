@@ -34,6 +34,8 @@ export function LobbyModal() {
   const [menuOpen, { open, close }] = useDisclosure(true);
   const [lobbyOpen, setLobbyOpen] = useState(false);
 
+  const [gameJoined, setGameJoined] = useState(false);
+
   //Team 1 is blue codemaster, team 2 is blue players, team 3 is red codemaster, team 4 is red players
   const [currentTeam, setCurrentTeam] = useState<number>(0);
 
@@ -69,12 +71,57 @@ export function LobbyModal() {
     backgroundColor: "#aef5f5",
   };
 
+  //prettier-ignore
+  const determinePfp = (num: number) => {
+    switch (num){
+      case 0:
+        return ("src/resources/pfps/spongebob.png")
+        break;
+      case 1:
+        return ("src/resources/pfps/squidward.jpg")
+        break;
+      case 2:
+        return ("src/resources/pfps/gary.jpg")
+        break;
+      case 3:
+          return ("src/resources/pfps/patrick.jpg")
+          break;
+      case 4:
+        return ("src/resources/pfps/plankton.jpg")
+        break;
+      case 5:
+        return ("src/resources/pfps/sandy.jpg")
+        break;
+      case 6:
+        return ("src/resources/pfps/mrspuff.jpg")
+        break;
+      case 7:
+        return ("src/resources/pfps/mrkrabs.jpg")
+        break;    
+    }
+  }
+
   const lobbyScreen = () => {
     return (
-      <Group align="center">
-        {teamMenu("Blue", blueStyle, 1, blueCodemaster, bluePlayers)}{" "}
-        {teamMenu("Red", redStyle, 3, redCodemaster, redPlayers)}
-      </Group>
+      <Stack align="center">
+        <Group align="center">
+          {teamMenu("Blue", blueStyle, 1, blueCodemaster, bluePlayers)}{" "}
+          {teamMenu("Red", redStyle, 3, redCodemaster, redPlayers)}
+        </Group>
+        <Group align="center">
+          <Button
+            onClick={() => {
+              console.log("Red Codemaster", redCodemaster);
+              console.log("Blue Codemaster", blueCodemaster);
+              console.log("Red Team", redPlayers);
+              console.log("Blue Team", bluePlayers);
+              close();
+            }}
+          >
+            Start Game
+          </Button>
+        </Group>
+      </Stack>
     );
   };
 
@@ -120,8 +167,8 @@ export function LobbyModal() {
     set: Set<User>,
     numOfPlayers: number
   ) => {
-    console.log("REPRINT");
     var arrayVersion = Array.from(set);
+
     return (
       <Stack h="30vh" w="22vw" sx={{ padding: "20px" }}>
         <Title
@@ -143,9 +190,16 @@ export function LobbyModal() {
         {arrayVersion.map((user, index) => (
           <Group key={index}>
             <Tooltip label={user.name}>
-              <Avatar key={user.name} radius="xl" size="sm" src={null}></Avatar>
+              <Avatar
+                key={user.name}
+                radius="xl"
+                size="lg"
+                src={determinePfp(user.pfp)}
+              ></Avatar>
             </Tooltip>
-            <Text>{user.name}</Text>
+            <Text fw={700} weight={100} c="dark">
+              {user.name}
+            </Text>
           </Group>
         ))}
         {currentTeam != ind && arrayVersion.length < numOfPlayers && (
@@ -190,7 +244,7 @@ export function LobbyModal() {
     var radNum = 70;
     var size = 150;
     return (
-      <Group>
+      <Group position="center">
         <Avatar
           size={size}
           radius={radNum}
@@ -276,20 +330,25 @@ export function LobbyModal() {
       closeOnClickOutside={false}
       closeOnEscape={false}
     >
-      <Stack>
+      <Stack align="center">
         <Title>Codenames</Title>
+        <Text weight={300} fw={500}>
+          {" "}
+          Username
+        </Text>
         <TextInput
           placeholder="Your name"
-          label="Username"
           value={usernameValue}
           onChange={(event) => setUsernameValue(event.currentTarget.value)}
           radius="md"
           size="md"
           withAsterisk
         />
-        <label>Select an Avatar</label>
+        <Text weight={300} fw={500}>
+          Select an Avatar
+        </Text>
         {pfpSelection()}
-        {usernameValue != "" ? (
+        {usernameValue != "" && pfpSelect != -1 && gameJoined != true ? (
           <Group>
             <Button
               size="lg"
@@ -298,6 +357,8 @@ export function LobbyModal() {
               onClick={() => {
                 setLobbyOpen(true);
                 setUsername(usernameValue);
+                setPfp(pfpSelect);
+                setGameJoined(true);
                 console.log("Current User ", userID);
               }}
             >

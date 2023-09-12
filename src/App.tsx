@@ -9,6 +9,7 @@ import {
   Box,
   Title,
   TextInput,
+  Group,
 } from "@mantine/core";
 import { WordGrid } from "./components/WordGrid";
 import { Modal, Stack, Button } from "@mantine/core";
@@ -41,6 +42,7 @@ function App() {
         <div>
           <Stack align="center">
             <Space h="md" />
+            <Group></Group>
             <WordGrid></WordGrid>
             <HintBox></HintBox>
             <LobbyModal></LobbyModal>

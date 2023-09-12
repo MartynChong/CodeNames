@@ -40,7 +40,6 @@ export default function WordCard({ children, cardNumber }: Props) {
 
     selectedWord,
     changeSelection,
-    PlayerSelections,
 
     confirmation,
   } = useGameProvider();
@@ -108,42 +107,63 @@ export default function WordCard({ children, cardNumber }: Props) {
   };
 
   //Checks if word is assigned to team
-  const wordExistsRed = redWords.has(cardNumber);
-
-  const wordExistsBlue = blueWords.has(cardNumber);
-
-  //Checks if word is assigned to either team
-  const wordUsed = redWords.has(cardNumber) || blueWords.has(cardNumber);
-
-  //Checks if black card
-  const blackCard = cardNumber === blackWord;
-
-  //Selects the card
-  const toggleSelected = () => {
-    if (team === "Blue") {
-      if (wordExistsBlue) {
-        if (blueCards.has(cardNumber)) {
-          removeBlueCard(cardNumber);
-        } else {
-          addBlueCard(cardNumber);
-        }
-      }
-    } else {
-      if (wordExistsRed) {
-        if (redCards.has(cardNumber)) {
-          removeRedCard(cardNumber);
-        } else {
-          addRedCard(cardNumber);
-        }
+  const wordExistsRed = () => {
+    for (const word of redWords) {
+      if (word.card === cardNumber) {
+        return true;
       }
     }
+    return false;
   };
+
+  //Checks if word is assigned to team
+  const wordExistsBlue = () => {
+    for (const word of blueWords) {
+      if (word.card === cardNumber) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  //Checks if word is assigned to either team
+  const wordUsed = () => {
+    if (wordExistsBlue() || wordExistsRed()) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  //Checks if black card
+  const wordUsedBlack = cardNumber === blackWord.card;
+
+  //Selects the card
+  // const toggleSelected = () => {
+  //   if (team === "Blue") {
+  //     if (wordExistsBlue()) {
+  //       if (blueCards.has(cardNumber)) {
+  //         removeBlueCard(cardNumber);
+  //       } else {
+  //         addBlueCard(cardNumber);
+  //       }
+  //     }
+  //   } else {
+  //     if (wordExistsRed()) {
+  //       if (redCards.has(cardNumber)) {
+  //         removeRedCard(cardNumber);
+  //       } else {
+  //         addRedCard(cardNumber);
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <Stack
       onClick={() => {
         if (turn === "Codemaster") {
-          toggleSelected();
+          // toggleSelected();
           // toggleTeam();
           // toggleTurn();
           forceUpdate();
@@ -157,25 +177,35 @@ export default function WordCard({ children, cardNumber }: Props) {
       h="12vh"
       w="13vw"
       align="center"
+      // sx={{
+      //   ...(turn === "Codemaster"
+      //     ? wordUsed()
+      //       ? wordExistsRed()
+      //         ? redCMStyle
+      //         : wordExistsBlue()
+      //           ? blueCMStyle
+      //           : blackCard
+      //         ? blackStyle
+      //         : normalStyle
+      //       : blackCard
+      //       ? blackStyle
+      //       : normalStyle
+      //     : //Players Turn: black cards and neutral cards ADD FOUND CARDS
+      //       normalStyle),
+      // }}
+
       sx={{
         ...(turn === "Codemaster"
-          ? wordUsed
-            ? wordExistsRed
-              ? redCards.has(cardNumber)
-                ? redSelectedStyle
-                : redCMStyle
-              : wordExistsBlue
-              ? blueCards.has(cardNumber)
-                ? blueSelectedStyle
-                : blueCMStyle
-              : blackCard
-              ? blackStyle
-              : normalStyle
-            : blackCard
+          ? wordUsed()
+            ? wordExistsBlue()
+              ? blueCMStyle
+              : wordExistsRed()
+              ? redCMStyle
+              : blackStyle
+            : wordUsedBlack
             ? blackStyle
             : normalStyle
-          : //Players Turn: black cards and neutral cards ADD FOUND CARDS
-            normalStyle),
+          : normalStyle),
       }}
 
       //Highlight when selected by codemaster
@@ -198,7 +228,7 @@ export default function WordCard({ children, cardNumber }: Props) {
         weight={100}
         align="center"
         fw={700}
-        c={blackCard && turn === "Codemaster" ? "silver" : "dark"}
+        c={wordUsedBlack && turn === "Codemaster" ? "silver" : "dark"}
         tt="capitalize"
       >
         {children}
