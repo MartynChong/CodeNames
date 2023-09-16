@@ -21,6 +21,7 @@ import HintBox from "./components/HintBox";
 import "./resources/countstyle.css";
 import GameProvider from "./contexts/GameProvider";
 import { LobbyModal } from "./components/LobbyModal";
+import { TeamList } from "./components/TeamList";
 // import TestCard from "./components/TestCard";
 
 function App() {
@@ -42,8 +43,12 @@ function App() {
         <div>
           <Stack align="center">
             <Space h="md" />
-            <Group></Group>
-            <WordGrid></WordGrid>
+            <Group>
+              <TeamList team="Red"></TeamList>
+              <WordGrid></WordGrid>
+              <TeamList team="Blue"></TeamList>
+            </Group>
+
             <HintBox></HintBox>
             <LobbyModal></LobbyModal>
             {/* <Modal opened={opened} onClose={close} centered size="auto">

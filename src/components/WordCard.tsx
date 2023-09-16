@@ -211,7 +211,7 @@ export default function WordCard({ children, cardNumber }: Props) {
       //Highlight when selected by codemaster
     >
       {/* {*Player Icons} */}
-      <Group position="right" h="1vh" mt="xs">
+      <Group position="right" mt="xs">
         <AvatarList cardNumber={cardNumber}></AvatarList>
       </Group>
 
