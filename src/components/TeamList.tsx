@@ -1,16 +1,18 @@
 import { Avatar, Group, Stack, Title, Tooltip, Text } from "@mantine/core";
 import { useGameProvider } from "../contexts/GameProvider";
 import determinePfp from "./DeterminePfp";
+import { useForceUpdate } from "@mantine/hooks";
 
 interface Props {
   team: string;
+  thisKey: number;
 }
 type User = {
   name: string;
   pfp: number;
 };
 
-export function TeamList({ team }: Props) {
+export function TeamList({ team, thisKey }: Props) {
   const { redPlayers, bluePlayers, redCodemaster, blueCodemaster } =
     useGameProvider();
 
@@ -21,6 +23,8 @@ export function TeamList({ team }: Props) {
   const blueStyle = {
     backgroundColor: "#aef5f5",
   };
+
+  const lmao = thisKey;
 
   const textType = (input: string) => {
     return (
@@ -49,8 +53,9 @@ export function TeamList({ team }: Props) {
   const playerTeamDisplay = (set: Set<User>) => {
     var arrayVersion = Array.from(set);
     return (
-      // <Group h="30vh" w="22vw" sx={{ padding: "20px" }}>
-      <Group sx={{ paddingLeft: "8px" }}>
+      <Stack
+        sx={{ paddingLeft: "25px", paddingTop: "2px", paddingBottom: "2px" }}
+      >
         {arrayVersion.map((user, index) => (
           <Group key={index}>
             <Tooltip label={user.name}>
@@ -66,7 +71,7 @@ export function TeamList({ team }: Props) {
             </Text>
           </Group>
         ))}
-      </Group>
+      </Stack>
     );
   };
 
@@ -79,9 +84,11 @@ export function TeamList({ team }: Props) {
     >
       {textType("8")}
       {textType("Codemaster")}
-      {playerTeamDisplay(redCodemaster)}
+      {team === "Red" && playerTeamDisplay(redCodemaster)}
+      {team !== "Red" && playerTeamDisplay(blueCodemaster)}
       {textType("Players")}
-      {playerTeamDisplay(redPlayers)}
+      {team === "Red" && playerTeamDisplay(redPlayers)}
+      {team !== "Red" && playerTeamDisplay(bluePlayers)}
     </Stack>
   );
 }

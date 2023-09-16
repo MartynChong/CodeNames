@@ -18,9 +18,14 @@ import determinePfp from "./DeterminePfp";
 type User = {
   name: string;
   pfp: number;
+  voted: boolean;
 };
 
-export function LobbyModal() {
+interface Props {
+  setKey: (num: number) => void;
+}
+
+export function LobbyModal({ setKey }: Props) {
   const {
     userID,
     setUsername,
@@ -29,6 +34,10 @@ export function LobbyModal() {
     blueCodemaster,
     redPlayers,
     bluePlayers,
+    setBluePlayers,
+    setRedPlayers,
+    setRedCodemaster,
+    setBlueCodemaster,
   } = useGameProvider();
 
   const [menuOpen, { open, close }] = useDisclosure(true);
@@ -47,18 +56,26 @@ export function LobbyModal() {
       case 1:
         setCurrentTeam(newTeam);
         blueCodemaster.delete(userID);
+        var replaceTeam = blueCodemaster;
+        setBlueCodemaster(replaceTeam);
         break;
       case 2:
         setCurrentTeam(newTeam);
         bluePlayers.delete(userID);
+        var replaceTeam = bluePlayers;
+        setBluePlayers(replaceTeam);
         break;
       case 3:
         setCurrentTeam(newTeam);
         redCodemaster.delete(userID);
+        var replaceTeam = redCodemaster;
+        setRedCodemaster(replaceTeam);
         break;
       case 4:
         setCurrentTeam(newTeam);
         redPlayers.delete(userID);
+        var replaceTeam = redPlayers;
+        setRedPlayers(replaceTeam);
         break;
     }
   };
@@ -85,6 +102,7 @@ export function LobbyModal() {
               console.log("Blue Codemaster", blueCodemaster);
               console.log("Red Team", redPlayers);
               console.log("Blue Team", bluePlayers);
+              setKey(1);
               close();
             }}
           >

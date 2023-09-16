@@ -24,16 +24,6 @@ export default function WordCard({ children, cardNumber }: Props) {
     userID,
 
     turn,
-    toggleTurn,
-    team,
-    toggleTeam,
-    redCards,
-    addRedCard,
-    blueCards,
-    addBlueCard,
-    removeBlueCard,
-    removeRedCard,
-
     redWords,
     blueWords,
     blackWord,

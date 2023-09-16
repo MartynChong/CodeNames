@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { nouns } from "../resources/nouns";
+import { useForceUpdate } from "@mantine/hooks";
 
 type User = {
   name: string;
@@ -20,7 +21,9 @@ const GameProviderCtx = createContext<{
   setVoteStatus: () => void;
 
   redCodemaster: Set<User>;
+  setRedCodemaster: (newTeam: Set<User>) => void;
   blueCodemaster: Set<User>;
+  setBlueCodemaster: (newTeam: Set<User>) => void;
 
   turn: string;
   toggleTurn: () => void;
@@ -72,12 +75,15 @@ const GameProviderCtx = createContext<{
 
   //Number of players
   redPlayers: Set<User>;
+  setRedPlayers: (newTeam: Set<User>) => void;
   bluePlayers: Set<User>;
+  setBluePlayers: (newTeam: Set<User>) => void;
 
   //End Turn
   playersVoted: Set<User>;
   endVotingTurn: boolean;
   votesSubmitted: () => void;
+  finalCardVote: number;
 } | null>(null);
 
 const numberOfWords = 20;
@@ -106,12 +112,26 @@ for (let i = 0; i < numberOfWords; i++) {
 //   filledArrayList[i].push(newUser);
 // }
 
+var user1 = { name: "Johnny", pfp: 0, voted: false };
+var user2 = { name: "Bob", pfp: 1, voted: false };
+var user3 = { name: "Dog", pfp: 2, voted: false };
+var user4 = { name: "wat", pfp: 3, voted: false };
+
+var startRedCodemaster = new Set<User>();
+var startRedPlayers = new Set<User>();
+var startBlueCodemaster = new Set<User>();
+var startBluePlayers = new Set<User>();
+
+startBlueCodemaster.add(user1);
+// startBluePlayers.add(user2);
+startRedCodemaster.add(user3);
+startRedPlayers.add(user4);
+
 const GameProvider = (props: { children: JSX.Element }) => {
   const defaultUser = { name: "Bobo", pfp: -1, voted: false };
   const [userID, setUserID] = useState<User>(defaultUser);
 
-  const redCodemaster = new Set<User>();
-  const blueCodemaster = new Set<User>();
+  const [finalCardVote, setFinalCardVote] = useState<number>(-1);
 
   const setPfp = (num: number) => {
     userID.pfp = num;
@@ -182,8 +202,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
     blueSet.add({ card: blueWordsArray[i], found: false });
   }
 
-  console.log("BLUE", blueSet);
-  console.log("RED", redSet);
   const redWords = new Set<{ card: number; found: boolean }>(redSet);
   const blueWords = new Set<{ card: number; found: boolean }>(blueSet);
 
@@ -227,38 +245,86 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const [confirmation, setConfirmation] = useState<boolean>(false);
 
+  const playersVoted = new Set<User>();
+
   const confirmVote = () => {
     setConfirmation(confirmation === true ? false : true);
+    playersVoted.add(userID);
     VoteForCard(userID, selectedWord);
-    console.log("VOTED: ", votedCards);
   };
 
-  const redPlayers = new Set<User>();
-  const bluePlayers = new Set<User>();
+  const [redPlayers, setRedPlayers] = useState(startRedPlayers);
+  const [bluePlayers, setBluePlayers] = useState(startBluePlayers);
 
-  const playersVoted = new Set<User>();
+  const [redCodemaster, setRedCodemaster] = useState(startRedCodemaster);
+  const [blueCodemaster, setBlueCodemaster] = useState(startBlueCodemaster);
+
   const [endVotingTurn, setEndingVotingTurn] = useState<boolean>(false);
 
   const votesSubmitted = () => {
+    console.log("Checking if votes are submitted");
     if (team === "Red") {
+      console.log(playersVoted.size, " - ", redPlayers.size);
       if (playersVoted.size === redPlayers.size) {
         endVoting();
       }
     } else {
+      console.log(playersVoted.size, " - ", bluePlayers.size);
       if (playersVoted.size === bluePlayers.size) {
         endVoting();
       }
     }
   };
 
+  const changeFinalCard = (num: number) => {
+    setFinalCardVote(num);
+    console.log("New vote", num, finalCardVote);
+  };
+
   const endVoting = () => {
-    console.log("Voting ends");
+    console.log("VOTES SUBMITTED");
+    console.log("List of voted cards", votedCards);
+    var longestCard = [];
+    var largestVote = 0;
+    for (const card of votedCards) {
+      var currentCard = card.card;
+      var currentSize = 0;
+      for (const word of votedCards) {
+        if (word.card === currentCard) {
+          currentSize = currentSize + 1;
+        }
+      }
+      if (largestVote <= currentCard) {
+        var newLarge = currentSize;
+        largestVote = newLarge;
+      }
+    }
+    console.log("LONGEST CARD", largestVote);
+
+    for (const card of votedCards) {
+      var currentLength = 0;
+      for (const word of votedCards) {
+        if (card.card === word.card) {
+          currentLength += 1;
+        }
+      }
+      if (currentLength >= largestVote) {
+        longestCard.push(card.card);
+      }
+    }
+    console.log(longestCard);
+    var rand = Math.ceil(Math.random() * longestCard.length) - 1;
+    console.log(rand);
+    console.log(longestCard[rand]);
+    changeFinalCard(longestCard[rand]);
+    console.log("FINAL VOTE", finalCardVote);
   };
 
   const votedCards = new Set<Vote>();
 
   const VoteForCard = (user: User, card: number) => {
     votedCards.add({ user, card });
+    votesSubmitted();
   };
 
   return (
@@ -271,6 +337,8 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
         blueCodemaster,
         redCodemaster,
+        setBlueCodemaster,
+        setRedCodemaster,
 
         turn,
         toggleTurn,
@@ -313,11 +381,14 @@ const GameProvider = (props: { children: JSX.Element }) => {
         confirmVote,
 
         redPlayers,
+        setRedPlayers,
         bluePlayers,
+        setBluePlayers,
         playersVoted,
         endVotingTurn,
         votesSubmitted,
         votedCards,
+        finalCardVote,
       }}
     >
       {props.children}

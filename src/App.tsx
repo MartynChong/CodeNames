@@ -22,6 +22,7 @@ import "./resources/countstyle.css";
 import GameProvider from "./contexts/GameProvider";
 import { LobbyModal } from "./components/LobbyModal";
 import { TeamList } from "./components/TeamList";
+import { TitleHeader } from "./components/TitleHeader";
 // import TestCard from "./components/TestCard";
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
   ];
   console.log(players.length);
 
-  // const [opened, { open, close }] = useDisclosure(false);
+  const [key, setKey] = useState(0);
 
   return (
     <MantineProvider
@@ -43,14 +44,14 @@ function App() {
         <div>
           <Stack align="center">
             <Space h="md" />
+            <TitleHeader></TitleHeader>
             <Group>
-              <TeamList team="Red"></TeamList>
+              <TeamList team="Red" thisKey={key}></TeamList>
               <WordGrid></WordGrid>
-              <TeamList team="Blue"></TeamList>
+              <TeamList team="Blue" thisKey={key}></TeamList>
             </Group>
-
             <HintBox></HintBox>
-            <LobbyModal></LobbyModal>
+            <LobbyModal setKey={setKey}></LobbyModal>
             {/* <Modal opened={opened} onClose={close} centered size="auto">
               <Stack align="center" sx={{ overflow: "hidden" }}>
                 <VoteWheel></VoteWheel>
