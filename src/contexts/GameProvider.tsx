@@ -53,10 +53,6 @@ const GameProviderCtx = createContext<{
   countValue: number;
   setCountValue: (num: number) => void;
 
-  //Timer index
-  timerValue: number;
-  setTimerValue: (num: number) => void;
-
   //Words list
   text: Array<string>;
 
@@ -83,7 +79,11 @@ const GameProviderCtx = createContext<{
   playersVoted: Set<User>;
   endVotingTurn: boolean;
   votesSubmitted: () => void;
-  finalCardVote: number;
+  finalCardVote: Set<number>;
+
+  //Display title text
+  displayNumber: number;
+  setDisplayNumber: (num: number) => void;
 } | null>(null);
 
 const numberOfWords = 20;
@@ -127,11 +127,30 @@ startBlueCodemaster.add(user1);
 startRedCodemaster.add(user3);
 startRedPlayers.add(user4);
 
+var redSet = new Set<{ card: number; found: boolean }>();
+for (let i = 0; i < redWordsArray.length; i++) {
+  redSet.add({ card: redWordsArray[i], found: false });
+}
+
+var blueSet = new Set<{ card: number; found: boolean }>();
+for (let i = 0; i < blueWordsArray.length; i++) {
+  blueSet.add({ card: blueWordsArray[i], found: false });
+}
+
 const GameProvider = (props: { children: JSX.Element }) => {
   const defaultUser = { name: "Bobo", pfp: -1, voted: false };
   const [userID, setUserID] = useState<User>(defaultUser);
 
-  const [finalCardVote, setFinalCardVote] = useState<number>(-1);
+  const [displayNumber, setDisplayNumber] = useState<number>(0);
+
+  const [finalCardVote, setFinalCardVote] = useState<Set<number>>(
+    new Set<number>()
+  );
+
+  const setFCard = (num: number) => {
+    finalCardVote.clear;
+    finalCardVote.add(num);
+  };
 
   const setPfp = (num: number) => {
     userID.pfp = num;
@@ -142,15 +161,12 @@ const GameProvider = (props: { children: JSX.Element }) => {
   };
 
   const setVoteStatus = () => {
-    userID.voted === true ? false : true;
+    userID.voted === true ? (userID.voted = false) : (userID.voted = true);
   };
-
-  const [timerValue, setTimerValue] = useState<number>(0);
 
   const [turn, setTurn] = useState<"Codemaster" | "Players">("Codemaster");
   const toggleTurn = () => {
     setTurn(turn === "Codemaster" ? "Players" : "Codemaster");
-    setTimerValue(timerValue + 1);
   };
 
   const [team, setTeam] = useState<"Blue" | "Red">("Blue");
@@ -192,16 +208,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
     setBlueCards(newArr);
   };
 
-  var redSet = new Set<{ card: number; found: boolean }>();
-  for (let i = 0; i < redWordsArray.length; i++) {
-    redSet.add({ card: redWordsArray[i], found: false });
-  }
-
-  var blueSet = new Set<{ card: number; found: boolean }>();
-  for (let i = 0; i < blueWordsArray.length; i++) {
-    blueSet.add({ card: blueWordsArray[i], found: false });
-  }
-
   const redWords = new Set<{ card: number; found: boolean }>(redSet);
   const blueWords = new Set<{ card: number; found: boolean }>(blueSet);
 
@@ -216,7 +222,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
 
   const changeSelection = (oldCard: number, newCard: number, player: User) => {
     setUserSelected(true);
-    // console.log("USER CHANGE", userSelected);
     setSelectedWord(newCard);
     addNewPlayerSelections(newCard, player);
     if (selectedWord != -1) {
@@ -224,7 +229,8 @@ const GameProvider = (props: { children: JSX.Element }) => {
     }
   };
 
-  const [playerSelections, setPlayerSelections] = useState(filledArrayList);
+  const [playerSelections, setPlayerSelections] =
+    useState<Array<Array<User>>>(filledArrayList);
 
   const addNewPlayerSelections = (card: number, player: User) => {
     console.log("CURRENT CARD", card);
@@ -266,24 +272,23 @@ const GameProvider = (props: { children: JSX.Element }) => {
     if (team === "Red") {
       console.log(playersVoted.size, " - ", redPlayers.size);
       if (playersVoted.size === redPlayers.size) {
+        setVoteStatus();
         endVoting();
       }
     } else {
       console.log(playersVoted.size, " - ", bluePlayers.size);
       if (playersVoted.size === bluePlayers.size) {
+        setVoteStatus();
         endVoting();
       }
     }
   };
 
   const changeFinalCard = (num: number) => {
-    setFinalCardVote(num);
-    console.log("New vote", num, finalCardVote);
+    setFCard(num);
   };
 
   const endVoting = () => {
-    console.log("VOTES SUBMITTED");
-    console.log("List of voted cards", votedCards);
     var longestCard = [];
     var largestVote = 0;
     for (const card of votedCards) {
@@ -299,7 +304,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
         largestVote = newLarge;
       }
     }
-    console.log("LONGEST CARD", largestVote);
 
     for (const card of votedCards) {
       var currentLength = 0;
@@ -312,12 +316,53 @@ const GameProvider = (props: { children: JSX.Element }) => {
         longestCard.push(card.card);
       }
     }
-    console.log(longestCard);
     var rand = Math.ceil(Math.random() * longestCard.length) - 1;
-    console.log(rand);
-    console.log(longestCard[rand]);
     changeFinalCard(longestCard[rand]);
     console.log("FINAL VOTE", finalCardVote);
+    confirmCorrectVote();
+  };
+
+  const confirmCorrectVote = () => {
+    console.log("HERE CONFIRMATION");
+    var [first] = finalCardVote;
+    if (team === "Blue") {
+      var wordFound = false;
+      for (const word of blueWords) {
+        if (word.card === first && word.found === false) {
+          word.found = true;
+          wordFound = true;
+        }
+      }
+      if (wordFound) {
+        console.log("Word found");
+        setDisplayNumber(1);
+        console.log("Blue words", blueWords);
+      } else {
+        console.log("Blue Word not Found");
+        setDisplayNumber(2);
+        toggleTeam();
+        toggleTurn();
+      }
+    } else if (team === "Red") {
+      var wordFound = false;
+      for (const word of redWords) {
+        if (word.card === first && word.found === false) {
+          word.found = true;
+          wordFound = true;
+        }
+      }
+      if (wordFound) {
+        console.log("Red Word found");
+        setDisplayNumber(1);
+        console.log("Red words", redWords);
+      } else {
+        console.log("Red Word not Found");
+        setDisplayNumber(2);
+        toggleTeam();
+        toggleTurn();
+      }
+    }
+    resetVotes();
   };
 
   const votedCards = new Set<Vote>();
@@ -325,6 +370,14 @@ const GameProvider = (props: { children: JSX.Element }) => {
   const VoteForCard = (user: User, card: number) => {
     votedCards.add({ user, card });
     votesSubmitted();
+  };
+
+  const resetVotes = () => {
+    for (var i = 0; i < playerSelections.length; i++) {
+      playerSelections[i] = [];
+    }
+    setUserSelected(false);
+    setConfirmation(false);
   };
 
   return (
@@ -365,9 +418,6 @@ const GameProvider = (props: { children: JSX.Element }) => {
         countValue,
         setCountValue,
 
-        timerValue,
-        setTimerValue,
-
         text,
 
         userSelected,
@@ -389,6 +439,9 @@ const GameProvider = (props: { children: JSX.Element }) => {
         votesSubmitted,
         votedCards,
         finalCardVote,
+
+        displayNumber,
+        setDisplayNumber,
       }}
     >
       {props.children}

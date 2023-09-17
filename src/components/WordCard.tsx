@@ -128,62 +128,34 @@ export default function WordCard({ children, cardNumber }: Props) {
   //Checks if black card
   const wordUsedBlack = cardNumber === blackWord.card;
 
-  //Selects the card
-  // const toggleSelected = () => {
-  //   if (team === "Blue") {
-  //     if (wordExistsBlue()) {
-  //       if (blueCards.has(cardNumber)) {
-  //         removeBlueCard(cardNumber);
-  //       } else {
-  //         addBlueCard(cardNumber);
-  //       }
-  //     }
-  //   } else {
-  //     if (wordExistsRed()) {
-  //       if (redCards.has(cardNumber)) {
-  //         removeRedCard(cardNumber);
-  //       } else {
-  //         addRedCard(cardNumber);
-  //       }
-  //     }
-  //   }
-  // };
+  const playersWordFound = () => {
+    for (const word of blueWords) {
+      if (word.card === cardNumber && word.found === true) {
+        return true;
+      }
+    }
+    for (const word of redWords) {
+      if (word.card === cardNumber && word.found === true) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   return (
     <Stack
       onClick={() => {
         if (turn === "Codemaster") {
-          // toggleSelected();
-          // toggleTeam();
-          // toggleTurn();
           forceUpdate();
         } else if (confirmation === true) {
+        } else if (playersWordFound()) {
         } else {
-          // toggleTurn();
-          // toggleTeam();
           changeSelection(selectedWord, cardNumber, userID);
         }
       }}
       h="12vh"
       w="13vw"
       align="center"
-      // sx={{
-      //   ...(turn === "Codemaster"
-      //     ? wordUsed()
-      //       ? wordExistsRed()
-      //         ? redCMStyle
-      //         : wordExistsBlue()
-      //           ? blueCMStyle
-      //           : blackCard
-      //         ? blackStyle
-      //         : normalStyle
-      //       : blackCard
-      //       ? blackStyle
-      //       : normalStyle
-      //     : //Players Turn: black cards and neutral cards ADD FOUND CARDS
-      //       normalStyle),
-      // }}
-
       sx={{
         ...(turn === "Codemaster"
           ? wordUsed()
@@ -195,6 +167,14 @@ export default function WordCard({ children, cardNumber }: Props) {
             : wordUsedBlack
             ? blackStyle
             : normalStyle
+          : playersWordFound()
+          ? wordExistsBlue()
+            ? blueCMStyle
+            : wordExistsRed()
+            ? redCMStyle
+            : wordUsedBlack
+            ? blackStyle
+            : neutralStyle
           : normalStyle),
       }}
 

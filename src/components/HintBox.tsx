@@ -36,6 +36,8 @@ export default function HintBox() {
     userSelected,
     confirmation,
     confirmVote,
+
+    setDisplayNumber,
   } = useGameProvider();
 
   const forceUpdate = useForceUpdate();
@@ -167,7 +169,10 @@ export default function HintBox() {
           </Tooltip>
         ) : (
           <Button
-            onClick={() => submitHint(team, value)}
+            onClick={() => {
+              submitHint(team, value);
+              setDisplayNumber(0);
+            }}
             variant="light"
             color="gray"
             size="lg"
